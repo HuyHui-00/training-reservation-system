@@ -1,0 +1,77 @@
+/* ------------------------------
+   Detail Page Layout
+------------------------------ */
+
+.container {
+  position: relative;
+}
+
+/* ปุ่มย้อนกลับ */
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.back-button:hover {
+  background-color: #0056b3;
+}
+
+/* Grid 2 ตาราง ซ้าย–ขวา */
+.detail-grid {
+  margin-top: 60px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  text-align: left;
+}
+
+/* ตารางรายละเอียด */
+.detail-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.detail-table td {
+  padding: 14px 12px;
+  border: 1px solid #ccc;
+  vertical-align: top;
+}
+
+.detail-table td:first-child {
+  width: 35%;
+  background-color: #f5f5f5;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.edit-button {
+  position: absolute;
+  top: 20px;
+  right: 20px; /* ชิดขวาสุด */
+  padding: 8px 16px;
+  background-color: #28a745; /* สีเขียวแตกต่างจากย้อนกลับ */
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.edit-button:hover {
+  background-color: #1e7e34;
+}

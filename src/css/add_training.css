@@ -1,0 +1,105 @@
+/* กล่องฟอร์ม */
+.form-box {
+    max-width: 700px;
+    margin: 20px 0;
+    padding: 25px;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* ✅ label ชิดซ้ายจริง */
+.form-box label {
+    display: block;
+    margin: 10px 0 4px 0;
+    padding: 0;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: left;
+}
+
+/* ✅ input ชิดซ้ายเท่ากัน */
+.form-box input,
+.form-box select,
+.form-box textarea {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 8px 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* focus */
+.form-box input:focus,
+.form-box select:focus,
+.form-box textarea:focus {
+    border-color: #4a90e2;
+    outline: none;
+}
+
+/* ✅ แถว ชื่อหลักสูตร + ช่วงเวลา */
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+/* กล่องแต่ละช่อง */
+.form-group {
+    flex: 1;
+}
+
+/* select ช่วงเวลา */
+.form-group.small {
+    flex: 0 0 140px;
+}
+
+/* fieldset */
+.form-box fieldset {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 5px;
+}
+
+/* legend */
+.form-box legend {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* ปุ่ม */
+.form-action {
+    margin-top: 20px;
+}
+
+.form-action .btn {
+    padding: 10px 18px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.form-action .btn {
+    background: #4a90e2;
+    color: #fff;
+}
+
+.form-action .cancel {
+    background: #ddd;
+    color: #333;
+    margin-left: 8px;
+}
+
+.error-box {
+    background-color: #f8d7da;
+    color: #842029;
+    padding: 12px 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    border: 1px solid #f5c2c7;
+    font-size: 14px;
+}

@@ -1,0 +1,141 @@
+/* ------------------------------
+   Layout & Body
+------------------------------ */
+body {
+  font-family: sans-serif;
+  background-color: #f2f2f2;
+  margin: 0;
+  padding: 0;
+}
+
+/* ------------------------------
+   Header
+------------------------------ */
+header {
+  background-color: #007bff;
+  color: white;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+header a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  background-color: #0056b3;
+  padding: 8px 15px;
+  border-radius: 4px;
+}
+
+header a:hover {
+  background-color: #003f7f;
+}
+
+/* ------------------------------
+   Container
+------------------------------ */
+.container {
+  max-width: 1400px;   /* ขยายให้ใหญ่ขึ้น */
+  width: 95%;
+  margin: 40px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+}
+
+/* ------------------------------
+   Buttons
+------------------------------ */
+.btn {
+    padding: 10px 18px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    background-color: #4a90e2;
+    color: #fff;
+}
+
+.btn:hover {
+    background-color: #357ABD;
+}
+
+
+/* ------------------------------
+   Table
+------------------------------ */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  margin-top: 20px;
+  table-layout: fixed; /* ใช้ความกว้างที่กำหนด */
+}
+
+th, td {
+  padding: 14px 10px;
+  border: 1px solid #ccc;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+th {
+  background-color: #007bff;
+  color: white;
+}
+
+/* กำหนดความกว้างแต่ละคอลัมน์ */
+table th:nth-child(1),
+table td:nth-child(1) {
+  width: 60px;   /* ลำดับ (#) */
+  text-align: center;
+}
+
+table th:nth-child(2),
+table td:nth-child(2) {
+  width: 150px;  /* วันที่ */
+  text-align: center;
+}
+
+table th:nth-child(4),
+table td:nth-child(4) {
+  width: 80px;   /* Booking */
+  text-align: center;
+}
+
+table th:nth-child(3),
+table td:nth-child(3) {
+  width: auto;   /* ชื่อหลักสูตร → กว้างที่สุด */
+}
+
+/* ------------------------------
+   Booking Icon
+------------------------------ */
+.booking-icon {
+  text-align: center;
+}
+
+.booking-icon a {
+  text-decoration: none;
+  font-size: 20px;
+  color: #007bff;
+}
+
+.booking-icon a:hover {
+  color: #0056b3;
+}
+

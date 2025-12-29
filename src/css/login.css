@@ -1,0 +1,180 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.login-box {
+  background: #fff;
+  padding: 30px;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.login-box h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.login-box label {
+  display: block;
+  margin-top: 14px;
+  font-size: 14px;
+}
+
+.login-box input[type="text"],
+.login-box input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+
+/* Single-button submit (default) */
+.login-box input[type="submit"] {
+  width: 100%;
+  margin-top: 22px;
+  padding: 12px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.login-box input[type="submit"]:hover {
+  background: #1e40af;
+}
+
+/* Actions row: when buttons are side-by-side */
+.login-box .actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.login-box .actions .btn-login,
+.login-box .actions .btn-cancel {
+  flex: 1 1 0%;
+  width: 0; /* ensure flex sizing takes precedence */
+  min-width: 0;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Fallback for inputs inside .actions (stronger selector) */
+.login-box .actions > input {
+  display: block;
+  flex: 1 1 0% !important;
+  width: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* Remove default borders/shadows/appearance from inputs */
+.login-box .actions > input {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  text-align: center;
+  font-size: 16px;
+}
+
+.login-box .actions .btn-login {
+  background: #2563eb;
+  color: #fff;
+}
+.login-box .actions .btn-login:hover { background: #1e40af; }
+
+.login-box .actions .btn-cancel {
+  background: #dc2626; /* red */
+  color: #fff;
+}
+.login-box .actions .btn-cancel:hover {
+  background: #b91c1c; /* darker red */
+}
+
+.error {
+  color: #dc2626;
+  margin-top: 12px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.success-box {
+  text-align: center;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  margin: 16px auto;
+  border: 4px solid #ddd;
+  border-top: 4px solid #2563eb;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 480px) {
+  .login-box {
+    padding: 24px 18px;
+    border-radius: 12px;
+  }
+
+  .login-box h2 {
+    font-size: 20px;
+  }
+
+  .login-box input {
+    font-size: 15px;
+  }
+}
+
+/* Buttons side-by-side: make cancel match submit size/style */
+.login-box .btn-login,
+.login-box .btn-cancel {
+  flex: 1;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+}
+
+.login-box .btn-login {
+  background: #2563eb;
+  color: #fff;
+}
+.login-box .btn-login:hover { background: #1e40af; }
+
+.login-box .btn-cancel {
+  background: #dc2626;
+  color: #fff;
+}
+.login-box .btn-cancel:hover {
+  background: #b91c1c;
+}
