@@ -12,7 +12,7 @@ $editData = null;
 // ======== แก้ไขข้อมูล ========
 if (isset($_GET['edit'])) {
     $editId = (int)$_GET['edit'];
-    $stmt = $conn->prepare("SELECT id, username FROM users WHERE id = ?");
+    $stmt = $conn->prepare("SELECT id, username, role FROM users WHERE id = ?");
     $stmt->bind_param("i", $editId);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -22,11 +22,25 @@ if (isset($_GET['edit'])) {
     }
 }
 
+// ======== ลบข้อมูล ========
+if (isset($_GET['delete'])) {
+    $deleteId = (int)$_GET['delete'];
+    if ($deleteId != $_SESSION['user_id']) {
+        $stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
+        $stmt->bind_param("i", $deleteId);
+        $stmt->execute();
+        $success = 'ลบบัญชีเรียบร้อยแล้ว';
+    } else {
+        $error = 'ไม่สามารถลบบัญชีของตัวเองได้';
+    }
+}
+
 // ======== บันทึกข้อมูล ========
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = trim($_POST['password'] ?? '');
     $confirm  = trim($_POST['confirm'] ?? '');
+    $role     = trim($_POST['role'] ?? 'Admin');
     $editId   = (int)($_POST['edit_id'] ?? 0);
 
     if ($username === '') {
@@ -38,15 +52,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'รหัสผ่านไม่ตรงกัน';
             } else {
                 $hashed = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $conn->prepare("UPDATE users SET username = ?, password = ? WHERE id = ?");
-                $stmt->bind_param("ssi", $username, $hashed, $editId);
+                $stmt = $conn->prepare("UPDATE users SET username = ?, password = ?, role = ? WHERE id = ?");
+                $stmt->bind_param("sssi", $username, $hashed, $role, $editId);
                 $stmt->execute();
                 $success = 'แก้ไขข้อมูลเรียบร้อยแล้ว';
                 $editMode = false;
             }
         } else {
-            $stmt = $conn->prepare("UPDATE users SET username = ? WHERE id = ?");
-            $stmt->bind_param("si", $username, $editId);
+            $stmt = $conn->prepare("UPDATE users SET username = ?, role = ? WHERE id = ?");
+            $stmt->bind_param("ssi", $username, $role, $editId);
             $stmt->execute();
             $success = 'แก้ไขข้อมูลเรียบร้อยแล้ว';
             $editMode = false;
@@ -67,8 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'ชื่อผู้ใช้นี้มีอยู่แล้ว';
             } else {
                 $hashed = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-                $stmt->bind_param("ss", $username, $hashed);
+                $stmt = $conn->prepare("INSERT INTO users (username, password, role) VALUES (?, ?, ?)");
+                $stmt->bind_param("sss", $username, $hashed, $role);
                 $stmt->execute();
                 $success = 'เพิ่มบัญชีผู้ดูแลระบบเรียบร้อยแล้ว';
             }
@@ -77,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // ดึงรายชื่อบัญชีทั้งหมด
-$users = $conn->query("SELECT id, username FROM users ORDER BY id ASC");
+$users = $conn->query("SELECT id, username, role FROM users ORDER BY id ASC");
 ?>
 <!doctype html>
 <html lang="th">
@@ -86,26 +100,34 @@ $users = $conn->query("SELECT id, username FROM users ORDER BY id ASC");
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>จัดการบัญชีผู้ดูแลระบบ</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-.table-actions { white-space: nowrap; }
-.card-form { position: sticky; top: 20px; }
-</style>
 </head>
 <body class="bg-light">
 
 <?php include __DIR__ . '/../components/sidebar_admin.php'; ?>
 
-<nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background: linear-gradient(135deg, #2563eb, #1e40af);">
-  <div class="container-fluid">
-    <button class="btn btn-outline-light me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar">☰ เมนู</button>
-    <span class="navbar-brand fw-bold fs-4">จัดการบัญชีผู้ดูแลระบบ</span>
-  </div>
-</nav>
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm"
+      style="background: linear-gradient(135deg, #2563eb, #1e40af);">
+      <div class="container-fluid">
+        <button class="btn btn-outline-light me-2"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#adminSidebar"
+          aria-controls="adminSidebar">
+          ☰ เมนู
+        </button>
 
-<div class="container-fluid py-4">
+        <span class="navbar-brand fw-bold fs-4">เพิ่มหลักสูตรอบรมอบรม</span>
+
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-white small d-none d-md-block">Admin Panel</span>
+        </div>
+      </div>
+    </nav>
+
+<div class="container-fluid py-3">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">จัดการบัญชี Admin</h4>
-    <a href="/admin/a_training_program.php" class="btn btn-outline-secondary btn-sm">กลับ</a>
+    <h5 class="mb-0">จัดการบัญชีเจ้าหน้าที่</h5>
+    <a href="/admin/a_training_program.php" class="btn btn-success btn-sm">ย้อนกลับ</a>
   </div>
 
   <?php if ($error): ?>
@@ -116,81 +138,89 @@ $users = $conn->query("SELECT id, username FROM users ORDER BY id ASC");
     <div class="alert alert-success alert-dismissible fade show"><?= htmlspecialchars($success) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
   <?php endif; ?>
 
-  <div class="row g-3">
-    <div class="col-lg-4 col-md-5">
-      <div class="card shadow-sm card-form">
-        <div class="card-header bg-primary text-white">
-          <h5 class="mb-0"><?= $editMode ? 'แก้ไขบัญชี' : 'เพิ่มบัญชีใหม่' ?></h5>
-        </div>
-        <div class="card-body">
-          <form method="POST">
-            <?php if ($editMode): ?>
-              <input type="hidden" name="edit_id" value="<?= $editData['id'] ?>">
-            <?php endif; ?>
-
-            <div class="mb-3">
-              <label class="form-label">Username</label>
-              <input type="text" name="username" class="form-control" value="<?= $editMode ? htmlspecialchars($editData['username']) : '' ?>" required>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Password <?= $editMode ? '(เว้นว่างหากไม่ต้องการเปลี่ยน)' : '' ?></label>
-              <input type="password" name="password" class="form-control" <?= $editMode ? '' : 'required' ?>>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">ยืนยัน Password</label>
-              <input type="password" name="confirm" class="form-control" <?= $editMode ? '' : 'required' ?>>
-            </div>
-
-            <div class="d-grid gap-2">
-              <button type="submit" class="btn btn-primary"><?= $editMode ? 'บันทึกการแก้ไข' : 'เพิ่มบัญชี' ?></button>
-              <?php if ($editMode): ?>
-                <a href="?" class="btn btn-secondary">ยกเลิก</a>
-              <?php endif; ?>
-            </div>
-          </form>
-        </div>
-      </div>
+  <!-- ฟอร์มเพิ่ม/แก้ไข -->
+  <div class="card shadow-sm mb-3">
+    <div class="card-header bg-light">
+      <h6 class="mb-0"><?= $editMode ? 'แก้ไขข้อมูลบัญชีเจ้าหน้าที่' : 'เพิ่มข้อมูลบัญชีเจ้าหน้าที่ใหม่' ?></h6>
     </div>
+    <div class="card-body">
+      <form method="POST">
+        <?php if ($editMode): ?>
+          <input type="hidden" name="edit_id" value="<?= $editData['id'] ?>">
+        <?php endif; ?>
 
-    <div class="col-lg-8 col-md-7">
-      <div class="card shadow-sm">
-        <div class="card-header bg-secondary text-white">
-          <h5 class="mb-0">รายชื่อบัญชีทั้งหมด</h5>
+        <div class="row g-2 mb-2">
+          <div class="col-md-4">
+            <label class="form-label small">Username</label>
+            <input type="text" name="username" class="form-control" 
+                   value="<?= $editMode ? htmlspecialchars($editData['username']) : '' ?>" 
+                   placeholder="admin" required>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label small">Password <?= $editMode ? '(เว้นว่างหากไม่ต้องการเปลี่ยน)' : '' ?></label>
+            <input type="password" name="password" class="form-control" 
+                   placeholder="••••••••" <?= $editMode ? '' : 'required' ?>>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label small">สิทธิการใช้งาน</label>
+            <select name="role" class="form-select">
+              <option value="">-- กำหนดสิทธิการใช้งาน --</option>
+              <option value="Admin" <?= ($editMode && ($editData['role'] ?? '') == 'Admin') ? 'selected' : '' ?>>Admin</option>
+              <option value="User" <?= ($editMode && ($editData['role'] ?? '') == 'User') ? 'selected' : '' ?>>User</option>
+            </select>
+          </div>
         </div>
-        <div class="card-body">
-          <?php if ($users->num_rows === 0): ?>
-            <div class="alert alert-info">ยังไม่มีข้อมูลบัญชี</div>
-          <?php else: ?>
-            <div class="table-responsive">
-              <table class="table table-hover table-bordered align-middle">
-                <thead class="table-light">
-                  <tr>
-                    <th class="text-center" style="width:60px;">ID</th>
-                    <th>Username</th>
-                    <th class="text-center" style="width:100px;">จัดการ</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <?php while ($row = $users->fetch_assoc()): ?>
-                    <tr>
-                      <td class="text-center"><?= $row['id'] ?></td>
-                      <td><strong><?= htmlspecialchars($row['username']) ?></strong>
-                          <?php if (isset($_SESSION['user_id']) && $row['id'] == $_SESSION['user_id']): ?>
-                            <span class="badge bg-success ms-2">ตัวคุณ</span>
-                          <?php endif; ?>
-                      </td>
-                      <td class="table-actions text-center">
-                        <a href="?edit=<?= $row['id'] ?>" class="btn btn-warning btn-sm">แก้ไข</a>
-                      </td>
-                    </tr>
-                  <?php endwhile; ?>
-                </tbody>
-              </table>
-            </div>
+
+        <div class="mt-3">
+          <button type="submit" class="btn btn-primary">
+            <?= $editMode ? 'บันทึกการแก้ไข' : 'เพิ่มบัญชีเจ้าหน้าที่' ?>
+          </button>
+          <?php if ($editMode): ?>
+            <a href="?" class="btn btn-secondary ms-2">ยกเลิก</a>
           <?php endif; ?>
         </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ตารางแสดงข้อมูล -->
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th class="py-2 px-3">Username</th>
+              <th class="py-2 px-3">สิทธิการใช้งาน</th>
+              <th class="py-2 px-3 text-center">หมายเหตุพิเศษ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php if ($users->num_rows === 0): ?>
+              <tr>
+                <td colspan="3" class="text-center text-muted py-4">ยังไม่มีข้อมูลบัญชี</td>
+              </tr>
+            <?php else: ?>
+              <?php while ($row = $users->fetch_assoc()): ?>
+                <tr>
+                  <td class="py-2 px-3"><strong><?= htmlspecialchars($row['username']) ?></strong></td>
+                  <td class="py-2 px-3">
+                    <span class="badge bg-primary"><?= htmlspecialchars($row['role'] ?? 'Admin') ?></span>
+                  </td>
+                  <td class="py-2 px-3 text-center">
+                    <a href="?edit=<?= $row['id'] ?>" class="btn btn-primary btn-sm">แก้ไข</a>
+                    <?php if (isset($_SESSION['user_id']) && $row['id'] != $_SESSION['user_id']): ?>
+                      <a href="?delete=<?= $row['id'] ?>" class="btn btn-warning btn-sm ms-1" 
+                         onclick="return confirm('คุณต้องการลบบัญชีนี้หรือไม่?')">ลบ</a>
+                    <?php endif; ?>
+                  </td>
+                </tr>
+              <?php endwhile; ?>
+            <?php endif; ?>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
