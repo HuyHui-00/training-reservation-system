@@ -7,7 +7,7 @@ if (isset($_POST['confirm']) && $_POST['confirm'] === 'yes') {
 
     echo "<script>  
             localStorage.setItem('logout_success', '1');
-            window.location.href = 'f_training_program.php';
+            window.location.href = '/f_training_program.php';
           </script>";
     exit;
 }

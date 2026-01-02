@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/../components/admin_guard.php';
+require_once __DIR__ . '/../db.php';
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -53,7 +55,7 @@ function thaiDate($date) {
 </head>
 
 <body class="bg-light">
-
+<?php include __DIR__ . '/../components/sidebar_admin.php'; ?>
 <!-- ===== Navbar ===== -->
 <nav class="navbar navbar-expand-lg navbar-dark shadow-sm"
      style="background: linear-gradient(135deg, #2563eb, #1e40af);">
@@ -111,9 +113,6 @@ function thaiDate($date) {
   <?php endif; ?>
 
 </div>
-
-<?php include __DIR__ . '/components/sidebar_admin.php'; ?>
-
 <!-- 🔥 สำคัญมาก: ถ้าไม่มี sidebar จะไม่เปิด -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 

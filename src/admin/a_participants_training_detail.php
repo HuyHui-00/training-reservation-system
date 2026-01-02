@@ -1,5 +1,7 @@
 <?php
-require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/../components/admin_guard.php';
+require_once __DIR__ . '/../db.php';
+
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 /* ===== รับค่า ===== */
@@ -87,7 +89,7 @@ $result = $stmt->get_result();
 </head>
 
 <body class="bg-light">
-
+<?php include __DIR__ . '/../components/sidebar_admin.php'; ?>
 <!-- ===== Navbar ===== -->
 <nav class="navbar navbar-expand-lg navbar-dark shadow-sm"
      style="background: linear-gradient(135deg, #2563eb, #1e40af);">
@@ -96,7 +98,7 @@ $result = $stmt->get_result();
             type="button"
             data-bs-toggle="offcanvas"
             data-bs-target="#adminSidebar">
-      เมนู
+      ☰ เมนู
     </button>
     <span class="navbar-brand fw-bold fs-5">รายชื่อผู้เข้าร่วมอบรม</span>
     <span class="text-white small d-none d-md-block">Admin Panel</span>
@@ -116,7 +118,7 @@ $result = $stmt->get_result();
 
   <div class="d-flex justify-content-between al ign-items-center mb-3">
     <span class="text-muted">พบทั้งหมด <?= $total ?> คน</span>
-    <a href="a_program_detail.php?date=<?= urlencode($date) ?>" class="btn btn-outline-secondary btn-sm">กลับ</a>
+    <a href="/admin/a_program_detail.php?date=<?= urlencode($date) ?>" class="btn btn-outline-secondary btn-sm">กลับ</a>
   </div>
 
   <!-- ค้นหา -->
@@ -210,7 +212,6 @@ $result = $stmt->get_result();
 
 </div>
 
-<?php include __DIR__ . '/components/sidebar_admin.php'; ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

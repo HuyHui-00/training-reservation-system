@@ -10,14 +10,14 @@
     <!-- เมนูหลัก -->
     <div class="list-group list-group-flush">
 
-      <a href="a_training_program.php"
+      <a href="/admin/a_training_program.php"
          class="list-group-item list-group-item-action bg-dark text-white border-secondary">
         หน้าหลัก
       </a>
 
-      <a href="a_teacher_search.php"
+      <a href="/admin/a_add_admin.php"
          class="list-group-item list-group-item-action bg-dark text-white border-secondary">
-        ค้นหารายชื่ออาจารย์
+        จัดการบัญชีผู้ใช้
       </a>
 
     </div>

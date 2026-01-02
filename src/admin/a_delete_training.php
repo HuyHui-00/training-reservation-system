@@ -18,5 +18,5 @@ $stmt->bind_param("s", $date);
 $stmt->execute();
 
 // กลับหน้าเดิม
-header("Location: a_training_program.php");
+header("Location: /admin/a_training_program.php");
 exit;

@@ -1,5 +1,6 @@
 <?php
-  include 'db.php';
+require_once __DIR__ . '/../components/admin_guard.php';
+require_once __DIR__ . '/../db.php';
 
   $error = '';
 
@@ -118,6 +119,7 @@
   </head>
 
   <body class="bg-light">
+    <?php include __DIR__ . '/../components/sidebar_admin.php'; ?>
     <nav class="navbar navbar-expand-lg navbar-dark shadow-sm"
       style="background: linear-gradient(135deg, #2563eb, #1e40af);">
       <div class="container-fluid">
@@ -139,7 +141,7 @@
 
     <div class="container mt-4" style="max-width: 750px;">
       <div class="mb-3">
-        <a href="a_training_program.php" class="btn btn-secondary">ย้อนกลับ</a>
+        <a href="/admin/a_training_program.php" class="btn btn-secondary">ย้อนกลับ</a>
       </div>
 
       <?php if (!empty($error)): ?>
@@ -197,7 +199,7 @@
 
         <div class="d-flex justify-content-between mt-4 btn-group-mobile">
           <button type="submit" class="btn btn-success btn-lg px-5">บันทึกข้อมูล</button>
-          <a href="a_training_program.php" class="btn btn-outline-secondary btn-lg px-5">ยกเลิก</a>
+          <a href="/admin/a_training_program.php" class="btn btn-outline-secondary btn-lg px-5">ยกเลิก</a>
         </div>
       </form>
     </div>
@@ -237,6 +239,5 @@
       });
     </script>
 
-    <?php include __DIR__ . '/components/sidebar_admin.php'; ?>
   </body>
 </html>

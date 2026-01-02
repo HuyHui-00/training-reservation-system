@@ -1,5 +1,6 @@
 <?php
-include 'db.php';
+require_once __DIR__ . '/../components/admin_guard.php';
+require_once __DIR__ . '/../db.php';
 
 $date = $_GET['date'] ?? '';
 if (!$date) exit("ไม่พบข้อมูลหลักสูตร");
@@ -118,7 +119,7 @@ textarea {
 </head>
 
 <body class="bg-light">
-
+<?php include __DIR__ . '/../components/sidebar_admin.php'; ?>
 <nav class="navbar navbar-expand-lg navbar-dark shadow-sm"
      style="background: linear-gradient(135deg, #2563eb, #1e40af);">
   <div class="container-fluid">
@@ -145,7 +146,7 @@ textarea {
 <!-- ======================== Content ======================== -->
 <div class="container container-custom mt-4">
 
-    <a href="a_training_program.php" class="btn btn-secondary mb-3">ย้อนกลับ</a>
+    <a href="/admin/a_training_program.php" class="btn btn-secondary mb-3">ย้อนกลับ</a>
 
     <form method="POST" id="editForm">
         <div class="row g-4">
@@ -290,6 +291,5 @@ form.addEventListener("submit", function(e) {
     });
 });
 </script>
-<?php include __DIR__ . '/components/sidebar_admin.php'; ?>
 </body>
 </html>

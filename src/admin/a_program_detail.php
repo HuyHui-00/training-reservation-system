@@ -1,5 +1,7 @@
 <?php
-include 'db.php';
+require_once __DIR__ . '/../components/admin_guard.php';
+require_once __DIR__ . '/../db.php';
+
 
 $date = $_GET['date'] ?? '';
 if (!$date) exit("ไม่พบข้อมูลหลักสูตร");
@@ -47,7 +49,7 @@ $afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['aft
 </head>
 
 <body class="bg-light">
-
+<?php include __DIR__ . '/../components/sidebar_admin.php'; ?>
 <nav class="navbar navbar-expand-lg navbar-dark shadow-sm"
      style="background: linear-gradient(135deg, #2563eb, #1e40af);">
   <div class="container-fluid">
@@ -55,7 +57,7 @@ $afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['aft
             type="button" 
             data-bs-toggle="offcanvas" 
             data-bs-target="#adminSidebar">
-      เมนู
+      ☰ เมนู
     </button>
 
     <span class="navbar-brand fw-bold fs-4">
@@ -68,7 +70,7 @@ $afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['aft
 
 <div class="mb-3 d-flex justify-content-between">
   <a href="a_training_program.php" class="btn btn-secondary">ย้อนกลับ</a>
-  <a href="a_edit_training_program.php?date=<?= urlencode($date) ?>" class="btn btn-warning">แก้ไข</a>
+  <a href="/admin/a_edit_training_program.php?date=<?= urlencode($date) ?>" class="btn btn-warning">แก้ไข</a>
 </div>
 
 <div class="row">
@@ -95,7 +97,7 @@ $afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['aft
         <?= $morningCount ?> / <?= $t['max_participants'] ?> คน
       </div>
 
-      <a href="a_participants_training_detail.php?date=<?= urlencode($date) ?>&period=morning"
+      <a href="/admin/a_participants_training_detail.php?date=<?= urlencode($date) ?>&period=morning"
          class="btn btn-outline-primary btn-sm w-100">
         ดูรายละเอียดผู้เข้าร่วม
       </a>
@@ -146,7 +148,6 @@ $afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['aft
 </div>
 </div>
 
-<?php include __DIR__ . '/components/sidebar_admin.php'; ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

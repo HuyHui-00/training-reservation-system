@@ -1,6 +1,13 @@
 <?php
-include 'db.php';
-session_start();
+require_once __DIR__ . '/../components/admin_guard.php';
+require_once __DIR__ . '/../db.php';
+
+function limitText($text, $limit = 40) {
+    if (mb_strlen($text, 'UTF-8') <= $limit) {
+        return $text;
+    }
+    return mb_substr($text, 0, $limit, 'UTF-8') . '...';
+}
 
 // --- Search / filter inputs ---
 $keyword = trim($_GET['keyword'] ?? '');
@@ -114,6 +121,7 @@ $now = time();
 </head>
 
 <body class="bg-light">
+<?php include __DIR__ . '/../components/sidebar_admin.php'; ?>
 
 <?php if (isset($_GET['saved'])): ?>
 <script>
@@ -151,7 +159,7 @@ Swal.fire({
   <div class="container">
 
     <div class="d-flex justify-content-end mb-3">
-      <a href="a_add_training.php" class="btn btn-success rounded-pill px-4 shadow-sm">
+      <a href="/admin/a_add_training.php" class="btn btn-success rounded-pill px-4 shadow-sm">
         เพิ่มหลักสูตรอบรม
       </a>
     </div>
@@ -165,7 +173,7 @@ Swal.fire({
       <div class="card-body">
 
         <!-- Search form -->
-        <form class="row g-2 mb-3" method="GET" action="a_training_program.php">
+        <form class="row g-2 mb-3" method="GET" action="/admin/a_training_program.php">
           <div class="col-md-5">
             <input type="text" name="keyword" class="form-control" placeholder="ค้นหาจากชื่อวิทยากร หรือ ชื่อหลักสูตร"
                    value="<?= htmlspecialchars($keyword) ?>">
@@ -181,7 +189,7 @@ Swal.fire({
           </div>
           <div class="col-12">
             <small class="text-muted">ใส่คำค้นหรือเลือกช่วงวันที่ แล้วกด 'ค้นหา' เพื่อกรองรายการ</small>
-            <a href="a_training_program.php" class="btn btn-link btn-sm">รีเซ็ต</a>
+            <a href="/admin/a_training_program.php" class="btn btn-link btn-sm">รีเซ็ต</a>
           </div>
         </form>
 
@@ -228,7 +236,7 @@ $afternoon = $row['afternoon_title'];
         } else {
           $status = "<span class='badge bg-success ms-2'>ว่าง</span>";
         }
-        echo htmlspecialchars($mRow['title']) . ' ' . $status;
+        echo htmlspecialchars(limitText($mRow['title'], 40)) . $status;
       }
     ?>
     </td>
@@ -252,13 +260,13 @@ $afternoon = $row['afternoon_title'];
         } else {
           $status = "<span class='badge bg-success ms-2'>ว่าง</span>";
         }
-        echo htmlspecialchars($aRow['title']) . ' ' . $status;
+        echo htmlspecialchars(limitText($mRow['title'], 40)) . $status;
       }
     ?>
     </td>
   <td>
     <div class="d-flex justify-content-center gap-2">
-      <a href="a_program_detail.php?date=<?= $date ?>" class="btn btn-primary btn-sm">📌</a>
+      <a href="/admin/a_program_detail.php?date=<?= $date ?>" class="btn btn-primary btn-sm">📌</a>
       <form method="POST" action="am_delete_training.php">
         <input type="hidden" name="date" value="<?= $date ?>">
         <button type="submit" class="btn btn-danger btn-sm delete-btn">🗑️</button>
@@ -336,7 +344,7 @@ $afternoon = $row['afternoon_title'];
                 ?>
                 </div>
               <div class="d-flex gap-2">
-                <a href="a_program_detail.php?date=<?= $date ?>" class="btn btn-primary btn-sm flex-fill">
+                <a href="/admin/a_program_detail.php?date=<?= $date ?>" class="btn btn-primary btn-sm flex-fill">
                   ดูรายละเอียด
                 </a>
                 <form method="POST" action="a_delete_training.php" class="flex-fill">
@@ -357,8 +365,6 @@ $afternoon = $row['afternoon_title'];
   </div>
 </div>
 
-<!-- ✅ Include Sidebar -->
-<?php include __DIR__ . '/components/sidebar_admin.php'; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -410,7 +416,6 @@ if (!empty($_SESSION['saved'])) {
 }
 ?>
 
-<?php include __DIR__ . '/components/sidebar_admin.php'; ?>
 
 </body>
 </html>
