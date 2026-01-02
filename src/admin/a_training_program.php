@@ -260,7 +260,7 @@ $afternoon = $row['afternoon_title'];
         } else {
           $status = "<span class='badge bg-success ms-2'>ว่าง</span>";
         }
-        echo htmlspecialchars(limitText($mRow['title'], 40)) . $status;
+        echo htmlspecialchars(limitText($aRow['title'], 40)) . $status;
       }
     ?>
     </td>
