@@ -162,14 +162,6 @@ $now = time();
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse" id="navMenu">
-      <div class="ms-auto">
-        <a href="login.php" class="btn btn-outline-light btn-sm mt-2 mt-lg-0">
-          Admin Login
-        </a>
-      </div>
-    </div>
-
   </div>
 </nav>
 

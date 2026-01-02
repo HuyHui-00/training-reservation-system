@@ -34,17 +34,17 @@ if ($id <= 0) {
 
 <body class="bg-light">
 
-<!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark shadow-sm"
      style="background: linear-gradient(135deg, #2563eb, #1e40af);">
   <div class="container-fluid">
-    <span class="navbar-brand fw-bold fs-4">ลงทะเบียนอบรม</span>
+    
+    <span class="navbar-brand fw-bold fs-4 d-flex align-items-center">
+      โครงงการอบรม
+    </span>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-    <div class="ms-auto">
-      <a href="login.php" class="btn btn-outline-light btn-sm">
-        Admin Login
-      </a>
-    </div>
   </div>
 </nav>
 
