@@ -1,5 +1,6 @@
 <?php
 include 'db.php';
+require_once __DIR__ . '/components/user_guard.php';
 
 $date = $_GET['date'] ?? '';
 if (!$date) exit("ไม่พบข้อมูลหลักสูตร");
@@ -125,7 +126,7 @@ $afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['aft
 
         <div class="text-center mt-3">
         <?php if (!$morningAllowed): ?>
-          <span class="badge bg-success p-2">อบรมสำเร็จ</span>
+          <span class="badge bg-info p-2">อบรมสำเร็จ</span>
         <?php elseif ($morningFull): ?>
           <span class="badge bg-danger p-2">เต็มแล้ว</span>
         <?php else: ?>
@@ -164,7 +165,7 @@ $afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['aft
 
         <div class="text-center mt-3">
         <?php if (!$afternoonAllowed): ?>
-          <span class="badge bg-success p-2">อบรมสำเร็จ</span>
+          <span class="badge bg-info p-2">อบรมสำเร็จ</span>
         <?php elseif ($afternoonFull): ?>
           <span class="badge bg-danger p-2">เต็มแล้ว</span>
         <?php else: ?>

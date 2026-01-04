@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/components/user_guard.php';
 $id     = $_GET['id'] ?? 0;
 $period = $_GET['period'] ?? '';
 $date   = $_GET['date'] ?? '';

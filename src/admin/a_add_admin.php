@@ -12,7 +12,11 @@ $editData = null;
 // ======== แก้ไขข้อมูล ========
 if (isset($_GET['edit'])) {
     $editId = (int)$_GET['edit'];
-    $stmt = $conn->prepare("SELECT id, username, role FROM users WHERE id = ?");
+    $stmt = $conn->prepare(
+    "SELECT id, username, role 
+     FROM users 
+     WHERE id = ? AND role = 'Admin'"
+);
     $stmt->bind_param("i", $editId);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -26,7 +30,9 @@ if (isset($_GET['edit'])) {
 if (isset($_GET['delete'])) {
     $deleteId = (int)$_GET['delete'];
     if ($deleteId != $_SESSION['user_id']) {
-        $stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
+        $stmt = $conn->prepare(
+            "DELETE FROM users WHERE id = ? AND role = 'Admin'"
+        );
         $stmt->bind_param("i", $deleteId);
         $stmt->execute();
         $success = 'ลบบัญชีเรียบร้อยแล้ว';
@@ -40,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = trim($_POST['password'] ?? '');
     $confirm  = trim($_POST['confirm'] ?? '');
-    $role     = trim($_POST['role'] ?? 'Admin');
+    $role = 'Admin';
     $editId   = (int)($_POST['edit_id'] ?? 0);
 
     if ($username === '') {
@@ -52,15 +58,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'รหัสผ่านไม่ตรงกัน';
             } else {
                 $hashed = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $conn->prepare("UPDATE users SET username = ?, password = ?, role = ? WHERE id = ?");
-                $stmt->bind_param("sssi", $username, $hashed, $role, $editId);
+                $stmt = $conn->prepare("UPDATE users SET username = ?, password = ? WHERE id = ?");
+                $stmt->bind_param("ssi", $username, $hashed, $editId);
                 $stmt->execute();
                 $success = 'แก้ไขข้อมูลเรียบร้อยแล้ว';
                 $editMode = false;
             }
         } else {
-            $stmt = $conn->prepare("UPDATE users SET username = ?, role = ? WHERE id = ?");
-            $stmt->bind_param("ssi", $username, $role, $editId);
+            $stmt = $conn->prepare("UPDATE users SET username = ? WHERE id = ?");
+            $stmt->bind_param("si", $username, $editId);
             $stmt->execute();
             $success = 'แก้ไขข้อมูลเรียบร้อยแล้ว';
             $editMode = false;
@@ -91,7 +97,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // ดึงรายชื่อบัญชีทั้งหมด
-$users = $conn->query("SELECT id, username, role FROM users ORDER BY id ASC");
+$users = $conn->query(
+    "SELECT id, username, role 
+     FROM users 
+     WHERE role = 'Admin' 
+     ORDER BY id ASC"
+);
 ?>
 <!doctype html>
 <html lang="th">
@@ -152,26 +163,28 @@ $users = $conn->query("SELECT id, username, role FROM users ORDER BY id ASC");
         <div class="row g-2 mb-2">
           <div class="col-md-4">
             <label class="form-label small">Username</label>
-            <input type="text" name="username" class="form-control" 
-                   value="<?= $editMode ? htmlspecialchars($editData['username']) : '' ?>" 
+            <input type="text" name="username" class="form-control"
+                   value="<?= $editMode ? htmlspecialchars($editData['username']) : '' ?>"
                    placeholder="admin" required>
           </div>
 
           <div class="col-md-4">
-            <label class="form-label small">Password <?= $editMode ? '(เว้นว่างหากไม่ต้องการเปลี่ยน)' : '' ?></label>
-            <input type="password" name="password" class="form-control" 
-                   placeholder="••••••••" <?= $editMode ? '' : 'required' ?>>
+            <label class="form-label small">
+              Password <?= $editMode ? '(เว้นว่างหากไม่ต้องการเปลี่ยน)' : '' ?>
+            </label>
+            <input type="password" name="password" class="form-control"
+                   <?= $editMode ? '' : 'required' ?>>
           </div>
 
           <div class="col-md-4">
-            <label class="form-label small">สิทธิการใช้งาน</label>
-            <select name="role" class="form-select">
-              <option value="">-- กำหนดสิทธิการใช้งาน --</option>
-              <option value="Admin" <?= ($editMode && ($editData['role'] ?? '') == 'Admin') ? 'selected' : '' ?>>Admin</option>
-              <option value="User" <?= ($editMode && ($editData['role'] ?? '') == 'User') ? 'selected' : '' ?>>User</option>
-            </select>
+            <label class="form-label small">
+              Confirm Password <?= $editMode ? '(เว้นว่างหากไม่ต้องการเปลี่ยน)' : '' ?>
+            </label>
+            <input type="password" name="confirm" class="form-control"
+                   <?= $editMode ? '' : 'required' ?>>
           </div>
         </div>
+
 
         <div class="mt-3">
           <button type="submit" class="btn btn-primary">

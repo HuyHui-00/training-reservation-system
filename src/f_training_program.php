@@ -1,5 +1,6 @@
 <?php
 include 'db.php';
+require_once __DIR__ . '/components/user_guard.php';
 
 /* ===== pagination ===== */
 $page  = max(1, (int)($_GET['page'] ?? 1));
@@ -154,16 +155,36 @@ $now = time();
 <nav class="navbar navbar-expand-lg navbar-dark shadow-sm"
      style="background: linear-gradient(135deg, #2563eb, #1e40af);">
   <div class="container-fluid">
-    
-    <span class="navbar-brand fw-bold fs-4 d-flex align-items-center">
-      โครงงการอบรม
+
+    <!-- Brand -->
+    <span class="navbar-brand fw-bold fs-4">
+      โครงการอบรม
     </span>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+
+    <!-- Toggle (mobile) -->
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
     </button>
 
+    <!-- Menu -->
+    <div class="collapse navbar-collapse" id="navMenu">
+
+      <!-- ดันไปขวาสุด -->
+      <div class="ms-auto">
+        <a href="/logout.php"
+           id="btnLogout"
+           class="btn btn-outline-light btn-sm">
+           ออกจากระบบ
+        </a>
+      </div>
+
+    </div>
+
   </div>
 </nav>
+
 
 <div class="container mt-4">
 
@@ -199,7 +220,23 @@ $now = time();
           <a href="f_training_program.php" class="btn btn-link btn-sm">รีเซ็ต</a>
         </div>
       </form>
+      <nav class="mt-3">
+        <ul class="pagination justify-content-center">
 
+          <?php for ($p = 1; $p <= $totalPages; $p++): ?>
+            <li class="page-item <?= $p == $page ? 'active' : '' ?>">
+              <a class="page-link"
+                 href="?page=<?= $p ?>
+                 &keyword=<?= urlencode($keyword) ?>
+                 &start_date=<?= urlencode($start_date) ?>
+                 &end_date=<?= urlencode($end_date) ?>">
+                <?= $p ?>
+              </a>
+            </li>
+          <?php endfor; ?>
+          
+        </ul>
+      </nav>
       <div class="table-responsive">
         <table class="table table-bordered table-striped align-middle text-center">
 
@@ -376,43 +413,42 @@ if (empty($aRow)) {
   </div>
 </div>
 <?php if ($totalPages > 1): ?>
-<nav class="mt-3">
-  <ul class="pagination justify-content-center">
 
-    <?php for ($p = 1; $p <= $totalPages; $p++): ?>
-      <li class="page-item <?= $p == $page ? 'active' : '' ?>">
-        <a class="page-link"
-           href="?page=<?= $p ?>
-           &keyword=<?= urlencode($keyword) ?>
-           &start_date=<?= urlencode($start_date) ?>
-           &end_date=<?= urlencode($end_date) ?>">
-          <?= $p ?>
-        </a>
-      </li>
-    <?php endfor; ?>
-
-  </ul>
-</nav>
 <?php endif; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    if (localStorage.getItem("logout_success") === "1") {
 
-        Swal.fire({
-            icon: 'success',
-            title: 'ออกจากระบบแล้ว',
-            text: 'คุณได้ออกจากระบบสำเร็จ',
-            timer: 1500,
-            showConfirmButton: false
-        });
+  const logoutBtn = document.getElementById("btnLogout");
 
-        localStorage.removeItem("logout_success");
-    }
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", function (e) {
+      e.preventDefault(); // ❌ ไม่ให้ redirect ทันที
+
+      Swal.fire({
+        title: 'ยืนยันการออกจากระบบ',
+        text: 'คุณต้องการออกจากระบบใช่หรือไม่?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'ออกจากระบบ',
+        cancelButtonText: 'ยกเลิก'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // เก็บสถานะไว้โชว์ alert หลัง logout
+          localStorage.setItem("logout_success", "1");
+          window.location.href = "/logout.php";
+        }
+      });
+    });
+  }
+
 });
 </script>
+
 
 </body>
 </html> 
