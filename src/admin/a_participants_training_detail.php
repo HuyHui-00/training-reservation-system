@@ -40,7 +40,7 @@ $types  = 'ss';
 $params = [$period, $date];
 
 if ($q !== '') {
-    $where   .= " AND r.name LIKE ?";
+    $where   .= " AND r.student_name LIKE ?";
     $types   .= 's';
     $params[] = "%$q%";
 }
@@ -64,14 +64,14 @@ $sql = "
     SELECT
         r.student_id,
         r.class_group,
-        r.name,
+        r.student_name,
         r.faculty,
         r.major,
         r.email
     FROM registrations r
     JOIN trainings t ON t.id = r.training_id
     WHERE $where
-    ORDER BY r.name ASC
+    ORDER BY r.student_name ASC
     LIMIT $limit OFFSET $offset
 ";
 $stmt = $conn->prepare($sql);
@@ -191,7 +191,7 @@ $result = $stmt->get_result();
               <td><?= $i++ ?></td>
               <td><?= htmlspecialchars($row['student_id']) ?></td>
               <td><?= htmlspecialchars($row['class_group']) ?></td>
-              <td><?= htmlspecialchars($row['name']) ?></td>
+              <td><?= htmlspecialchars($row['student_name']) ?></td>
               <td><?= htmlspecialchars($row['faculty']) ?></td>
               <td><?= htmlspecialchars($row['major']) ?></td>
               <td><?= htmlspecialchars($row['email']) ?></td>
