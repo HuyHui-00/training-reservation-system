@@ -221,7 +221,7 @@ $now = time();
         </div>
       </form>
       <nav class="mt-3">
-        <ul class="pagination justify-content-center">
+        <ul class="pagination justify-content-end">
 
           <?php for ($p = 1; $p <= $totalPages; $p++): ?>
             <li class="page-item <?= $p == $page ? 'active' : '' ?>">
