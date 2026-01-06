@@ -43,7 +43,7 @@ $alreadyRegistered = $stmt->get_result()->num_rows > 0;
     margin: auto;
   }
 
-  @media (max-width: 576px) {
+  @media (max-width: 768px) {
       h4 { font-size: 20px; }
       .form-label { font-size: 14px; }
       input.form-control { font-size: 14px; padding: 10px; }

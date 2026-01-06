@@ -51,7 +51,7 @@ $afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['aft
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
-@media (max-width: 576px) {
+@media (max-width: 768px) {
     .card {
         margin-bottom: 20px;
     }

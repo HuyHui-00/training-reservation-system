@@ -47,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 $login_success = true;
 
-                // กำหนดหน้า redirect ตาม role
+                // redirect ตาม role
                 if ($user['role'] === 'Admin') {
                     $redirect_url = '/admin/a_training_program.php';
                 } else {
@@ -67,13 +67,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <html lang="th">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>เข้าสู่ระบบ</title>
 
-<link rel="stylesheet" href="/css/login.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+}
+.card {
+    border-radius: 12px;
+}
+</style>
 </head>
 
-<body>
+<body class="d-flex align-items-center justify-content-center">
 
 <?php if ($login_success): ?>
 <script>
@@ -84,28 +96,35 @@ Swal.fire({
     timer: 1200,
     showConfirmButton: false
 }).then(() => {
-    window.location.href = "<?= $redirect_url ?>";
+    window.location.replace("<?= $redirect_url ?>?v=mobile");
 });
 </script>
 <?php endif; ?>
 
-<div class="login-box">
-    <h2>เข้าสู่ระบบ</h2>
+<div class="col-md-4 col-11">
+    <div class="card shadow">
+        <div class="card-body p-4">
+            <h3 class="text-center fw-bold mb-4 text-primary">เข้าสู่ระบบ</h3>
 
-    <form method="POST" id="loginForm">
-        <label>ชื่อผู้ใช้</label>
-        <input type="text" name="username" id="username">
+            <form method="POST" id="loginForm">
+                <div class="mb-3">
+                    <label class="form-label">ชื่อผู้ใช้</label>
+                    <input type="text" name="username" id="username" class="form-control" placeholder="Username" autocomplete="username">
+                </div>
 
-        <label>รหัสผ่าน</label>
-        <input type="password" name="password" id="password">
+                <div class="mb-3">
+                    <label class="form-label">รหัสผ่าน</label>
+                    <input type="password" name="password" id="password" class="form-control" placeholder="Password" autocomplete="current-password">
+                </div>
 
-        <input type="submit" value="เข้าสู่ระบบ">
-    </form>
+                <button type="submit" class="btn btn-primary w-100">เข้าสู่ระบบ</button>
+            </form>
 
-    <p class="text-center">
-        ยังไม่มีบัญชี?
-        <a href="/user_register.php">สมัครสมาชิก</a>
-    </p>
+            <div class="text-center mt-3">
+                <small>ยังไม่มีบัญชี? <a href="/user_register.php">สมัครสมาชิก</a></small>
+            </div>
+        </div>
+    </div>
 </div>
 
 <?php if ($error): ?>
@@ -119,6 +138,10 @@ Swal.fire({
 <?php endif; ?>
 
 <script>
+const loginForm = document.getElementById("loginForm");
+const username  = document.getElementById("username");
+const password  = document.getElementById("password");
+
 loginForm.addEventListener("submit", e => {
     if (!username.value.trim() || !password.value.trim()) {
         e.preventDefault();

@@ -25,22 +25,22 @@ if ($keyword !== '') {
 }
 
 if ($start_date !== '' && $end_date !== '') {
-  $where[] = "date BETWEEN ? AND ?";
+  $where[] = "training_date BETWEEN ? AND ?";
   $types .= 'ss';
   $params[] = $start_date;
   $params[] = $end_date;
 } elseif ($start_date !== '') {
-  $where[] = "date >= ?";
+  $where[] = "training_date >= ?";
   $types .= 's';
   $params[] = $start_date;
 } elseif ($end_date !== '') {
-  $where[] = "date <= ?";
+  $where[] = "training_date <= ?";
   $types .= 's';
   $params[] = $end_date;
 }
 
 /* ===== นับจำนวนวันอบรมทั้งหมด ===== */
-$sqlCount = "SELECT COUNT(DISTINCT date) AS total FROM trainings";
+$sqlCount = "SELECT COUNT(DISTINCT training_date) AS total FROM trainings";
 if ($where) {
   $sqlCount .= " WHERE " . implode(' AND ', $where);
 }
@@ -56,7 +56,7 @@ $totalPages = ceil($total / $limit);
 /* ===== ดึงข้อมูลอบรม (จำกัด 10) ===== */
 $sql = "
   SELECT 
-    date,
+    training_date,
     MAX(CASE WHEN period='morning' THEN title END) AS morning_title,
     MAX(CASE WHEN period='afternoon' THEN title END) AS afternoon_title
   FROM trainings
@@ -67,8 +67,8 @@ if ($where) {
 }
 
 $sql .= "
-  GROUP BY date
-  ORDER BY date ASC
+  GROUP BY training_date
+  ORDER BY training_date ASC
   LIMIT $limit OFFSET $offset
 ";
 
@@ -97,7 +97,7 @@ function shortText($text, $limit = 30) {
 
 // ฟังก์ชันช่วย: คืนข้อมูล training ตามวันที่และช่วง
 function getTraining($conn, $date, $period) {
-  $stmt = $conn->prepare("SELECT * FROM trainings WHERE date=? AND period=? LIMIT 1");
+  $stmt = $conn->prepare("SELECT * FROM trainings WHERE training_date=? AND period=? LIMIT 1");
   $stmt->bind_param("ss", $date, $period);
   $stmt->execute();
   return $stmt->get_result()->fetch_assoc();
@@ -123,30 +123,45 @@ $now = time();
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
-@media (max-width: 576px) {
+/* desktop / tablet */
+.mobile-card {
+    display: none;
+}
+
+/* mobile */
+@media (max-width: 768px) {
+
     table {
         display: none;
     }
-}
 
-@media (max-width: 576px) {
     .mobile-card {
         display: block;
-        background: white;
-        border-radius: 8px;
-        padding: 12px;
-        margin-bottom: 12px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 14px;
+        margin-bottom: 14px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
     }
+
     .mobile-card-title {
-        font-weight: bold;
-        font-size: 16px;
-        color: #0d6efd;
+        font-weight: 700;
+        font-size: 17px;
+        color: #1d4ed8;
     }
+
     .mobile-card small {
-        color: #555;
+        color: #6b7280;
     }
 }
+@media (max-width: 768px) {
+    .form-control,
+    .btn {
+        font-size: 15px;
+        padding: 10px 12px;
+    }
+}
+
 </style>
 
 </head>
@@ -204,13 +219,16 @@ $now = time();
       <!-- Search form -->
       <form class="row g-2 mb-3" method="GET" action="f_training_program.php">
         <div class="col-md-6">
+          <label class="form-label d-md-none">คำค้นหา</label>
           <input type="text" name="keyword" class="form-control" placeholder="ค้นหาจากชื่อวิทยากร หรือ ชื่อหลักสูตร"
                  value="<?= htmlspecialchars($keyword) ?>">
         </div>
         <div class="col-md-3">
+          <label class="form-label d-md-none">วันที่เริ่มต้น</label>
           <input type="date" name="start_date" class="form-control" value="<?= htmlspecialchars($start_date) ?>">
         </div>
         <div class="col-md-3 d-grid">
+          <label class="form-label d-md-none">วันที่สิ้นสุด</label>
           <div class="d-flex gap-2">
             <input type="date" name="end_date" class="form-control" value="<?= htmlspecialchars($end_date) ?>">
             <button class="btn btn-primary" type="submit">ค้นหา</button>
@@ -221,7 +239,7 @@ $now = time();
         </div>
       </form>
       <nav class="mt-3">
-        <ul class="pagination justify-content-end">
+        <ul class="pagination justify-content-center justify-content-md-end">
 
           <?php for ($p = 1; $p <= $totalPages; $p++): ?>
             <li class="page-item <?= $p == $page ? 'active' : '' ?>">
@@ -237,7 +255,7 @@ $now = time();
           
         </ul>
       </nav>
-      <div class="table-responsive">
+      <div class="table-responsive d-none d-md-block">
         <table class="table table-bordered table-striped align-middle text-center">
 
           <thead style="background:#1f2937;color:white;">
@@ -255,7 +273,7 @@ $now = time();
 <?php
 $index = 1;
 while ($row = $result->fetch_assoc()):
-    $date      = $row['date'];
+    $date      = $row['training_date'];
     $morning   = $row['morning_title'];
     $afternoon = $row['afternoon_title'];
 ?>
@@ -275,7 +293,7 @@ while ($row = $result->fetch_assoc()):
           }
         } else {
           $mCount = countRegister($conn, $mRow['id'], 'morning');
-              $end_ts = strtotime($mRow['date'] . ' 12:00:00');
+              $end_ts = strtotime($mRow['training_date'] . ' 12:00:00');
               if ($now > $end_ts) {
                 $status = "<span class='badge bg-info text-white ms-2'>อบรมสำเร็จ</span>";
               } elseif ($mCount >= $mRow['max_participants']) {
@@ -300,7 +318,7 @@ while ($row = $result->fetch_assoc()):
           }
         } else {
           $aCount = countRegister($conn, $aRow['id'], 'afternoon');
-              $end_ts = strtotime($aRow['date'] . ' 17:00:00');
+              $end_ts = strtotime($aRow['training_date'] . ' 17:00:00');
               if ($now > $end_ts) {
                 $status = "<span class='badge bg-info text-white ms-2'>อบรมสำเร็จ</span>";
               } elseif ($aCount >= $aRow['max_participants']) {
@@ -314,7 +332,7 @@ while ($row = $result->fetch_assoc()):
   </td>
 
   <td>
-    <a href="f_program_detail.php?date=<?= $date ?>" 
+    <a href="f_program_detail.php?training_date=<?= $date ?>" 
        class="btn btn-primary btn-sm shadow-sm"
        title="ดูรายละเอียด">
        รายละเอียด
@@ -326,7 +344,7 @@ while ($row = $result->fetch_assoc()):
           </tbody>
         </table>
       </div>
-      <div class="d-sm-none mt-3">
+      <div class="d-md-none mt-3">
 
 <?php
 $index = 1;
@@ -335,16 +353,16 @@ while ($row = $result->fetch_assoc()):
 ?>
     <div class="mobile-card">
         <div class="mobile-card-title">
-            <?= $index++ ?>) <?= thaiDate($row['date']) ?>
+            <?= $index++ ?>) <?= thaiDate($row['training_date']) ?>
         </div>
 
         <div class="mt-1">
           <small>ช่วงเช้า:</small><br>
           <?php
-$mRow = getTraining($conn, $row['date'], 'morning');
+$mRow = getTraining($conn, $row['training_date'], 'morning');
 
 if (empty($mRow)) {
-    $other = getTraining($conn, $row['date'], 'afternoon');
+    $other = getTraining($conn, $row['training_date'], 'afternoon');
     if (!empty($other)) {
         echo "<span class='badge bg-secondary'>ไม่มีการอบรม</span>";
     } else {
@@ -352,7 +370,7 @@ if (empty($mRow)) {
     }
 } else {
     $mCount = countRegister($conn, $mRow['id'], 'morning');
-    $end_ts = strtotime($mRow['date'] . ' 12:00:00');
+    $end_ts = strtotime($mRow['training_date'] . ' 12:00:00');
 
     if ($now > $end_ts) {
         $status = "<span class='badge bg-info text-white ms-2'>อบรมสำเร็จ</span>";
@@ -371,10 +389,10 @@ if (empty($mRow)) {
         <div class="mt-1">
           <small>ช่วงบ่าย:</small><br>
           <?php
-$aRow = getTraining($conn, $row['date'], 'afternoon');
+$aRow = getTraining($conn, $row['training_date'], 'afternoon');
 
 if (empty($aRow)) {
-    $other = getTraining($conn, $row['date'], 'morning');
+    $other = getTraining($conn, $row['training_date'], 'morning');
     if (!empty($other)) {
         echo "<span class='badge bg-secondary'>ไม่มีการอบรม</span>";
     } else {
@@ -382,7 +400,7 @@ if (empty($aRow)) {
     }
 } else {
     $aCount = countRegister($conn, $aRow['id'], 'afternoon');
-    $end_ts = strtotime($aRow['date'] . ' 17:00:00');
+    $end_ts = strtotime($aRow['training_date'] . ' 17:00:00');
 
     if ($now > $end_ts) {
         $status = "<span class='badge bg-info text-white ms-2'>อบรมสำเร็จ</span>";
@@ -399,7 +417,7 @@ if (empty($aRow)) {
         </div>
 
         <div class="mt-2">
-            <a href="f_program_detail.php?date=<?= $row['date'] ?>" 
+            <a href="f_program_detail.php?training_date=<?= $row['training_date'] ?>" 
                class="btn btn-primary btn-sm w-100">
                 ดูรายละเอียด
             </a>
@@ -451,4 +469,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 </body>
-</html> 
+</html>
