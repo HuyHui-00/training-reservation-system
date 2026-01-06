@@ -1,12 +1,32 @@
 <?php
 require_once __DIR__ . '/components/user_guard.php';
-$id     = $_GET['id'] ?? 0;
+require_once __DIR__ . '/db.php'; // === เพิ่ม ===
+
+$id     = (int)($_GET['id'] ?? 0);
 $period = $_GET['period'] ?? '';
 $date   = $_GET['date'] ?? '';
 
 if ($id <= 0) {
     exit("ไม่พบข้อมูลการอบรม");
 }
+
+$user_id = $_SESSION['user_id'];
+$alreadyRegistered = false;
+
+$stmt = $conn->prepare("
+    SELECT r.id
+    FROM registrations r
+    JOIN trainings t ON t.id = r.training_id
+    WHERE r.user_id = ?
+      AND r.training_id = ?
+      AND t.date = ?
+      AND r.period = ?
+    LIMIT 1
+");
+$stmt->bind_param("iiss", $user_id, $id, $date, $period);
+$stmt->execute();
+$alreadyRegistered = $stmt->get_result()->num_rows > 0;
+
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -38,24 +58,36 @@ if ($id <= 0) {
 <nav class="navbar navbar-expand-lg navbar-dark shadow-sm"
      style="background: linear-gradient(135deg, #2563eb, #1e40af);">
   <div class="container-fluid">
-    
     <span class="navbar-brand fw-bold fs-4 d-flex align-items-center">
-      โครงงการอบรม
+      โครงการอบรม
     </span>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
   </div>
 </nav>
 
 <div class="container">
-
   <div class="form-container">
     <div class="card shadow-sm">
       <div class="card-body">
 
         <h4 class="mb-3 text-center">ลงทะเบียนเข้าร่วมอบรม</h4>
+
+        <?php if ($alreadyRegistered): ?>
+        <!-- =======================
+             === เพิ่ม : แจ้งว่าลงทะเบียนแล้ว ===
+             ======================= -->
+        <div class="alert alert-warning text-center">
+            <h5 class="mb-2">คุณได้ลงทะเบียนอบรมนี้แล้ว</h5>
+            <p class="text-muted mb-3">
+                ระบบไม่อนุญาตให้ลงทะเบียนซ้ำ
+            </p>
+            <a href="f_program_detail.php?date=<?= urlencode($date) ?>"
+               class="btn btn-secondary">
+               กลับไปหน้ารายการอบรม
+            </a>
+        </div>
+
+        <?php else: ?>
+
         <p class="text-muted text-center mb-4">
           กรุณากรอกข้อมูลนักศึกษาให้ครบถ้วนและถูกต้อง
         </p>
@@ -128,11 +160,11 @@ if ($id <= 0) {
           </div>
 
         </form>
+        <?php endif; ?>
 
       </div>
     </div>
   </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

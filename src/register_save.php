@@ -1,10 +1,19 @@
 <?php
+session_start();
 include 'db.php';
 
+/* ===== ตรวจสอบการ login ===== */
+$user_id = $_SESSION['user_id'] ?? 0;
+if ($user_id <= 0) {
+    exit("กรุณาเข้าสู่ระบบ");
+}
+
+/* ===== ตรวจสอบ method ===== */
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit("Invalid request");
 }
 
+/* ===== รับค่า ===== */
 $training_id  = (int)$_POST['training_id'];
 $period       = $_POST['period'] ?? '';
 $student_id   = trim($_POST['student_id'] ?? '');
@@ -19,6 +28,7 @@ if (!in_array($role, ['student', 'teacher'])) {
     $role = 'student';
 }
 
+/* ===== ตรวจสอบข้อมูล ===== */
 if ($role === 'student') {
     if ($student_id === '' || $student_name === '' || $email === '') {
         exit('กรุณากรอกข้อมูลนักศึกษาให้ครบถ้วน');
@@ -30,11 +40,11 @@ if ($role === 'student') {
 }
 
 /* ===== ดึงข้อมูลหลักสูตร ===== */
-$stmt = $conn->prepare(
-    "SELECT date, max_participants 
-     FROM trainings 
-     WHERE id = ?"
-);
+$stmt = $conn->prepare("
+    SELECT date, max_participants
+    FROM trainings
+    WHERE id = ?
+");
 $stmt->bind_param("i", $training_id);
 $stmt->execute();
 $training = $stmt->get_result()->fetch_assoc();
@@ -46,11 +56,12 @@ if (!$training) {
 $date = $training['date'];
 $MAX  = (int)$training['max_participants'];
 
-$stmt = $conn->prepare(
-    "SELECT COUNT(*) AS total 
-     FROM registrations 
-     WHERE training_id = ? AND period = ?"
-);
+/* ===== ตรวจสอบจำนวนที่นั่ง ===== */
+$stmt = $conn->prepare("
+    SELECT COUNT(*) AS total
+    FROM registrations
+    WHERE training_id = ? AND period = ?
+");
 $stmt->bind_param("is", $training_id, $period);
 $stmt->execute();
 $total = $stmt->get_result()->fetch_assoc()['total'];
@@ -59,40 +70,36 @@ if ($total >= $MAX) {
     exit("ช่วงเวลานี้เต็มแล้ว");
 }
 
-/* ===== ตรวจสอบการลงทะเบียนซ้ำ ===== */
-if ($role === 'student') {
-    $stmt = $conn->prepare(
-        "SELECT id 
-         FROM registrations 
-         WHERE training_id = ? AND student_id = ? AND period = ?"
-    );
-    $stmt->bind_param("iss", $training_id, $student_id, $period);
-} else {
-    $stmt = $conn->prepare(
-        "SELECT id 
-         FROM registrations 
-         WHERE training_id = ? AND email = ? AND period = ?"
-    );
-    $stmt->bind_param("iss", $training_id, $email, $period);
-}
-
+/* ===== ตรวจสอบการลงทะเบียนซ้ำ (แก้แล้ว) ===== */
+$stmt = $conn->prepare("
+    SELECT r.id
+    FROM registrations r
+    JOIN trainings t ON t.id = r.training_id
+    WHERE r.user_id = ?
+      AND r.training_id = ?
+      AND r.period = ?
+      AND t.date = ?
+    LIMIT 1
+");
+$stmt->bind_param("iiss", $user_id, $training_id, $period, $date);
 $stmt->execute();
 
 if ($stmt->get_result()->num_rows > 0) {
-    exit("⚠ คุณลงทะเบียนช่วงนี้แล้ว");
+    exit("⚠ คุณได้ลงทะเบียนอบรมนี้แล้ว");
 }
 
 /* ===== บันทึกข้อมูล ===== */
 $created_at = date('Y-m-d H:i:s');
 
-$stmt = $conn->prepare(
-    "INSERT INTO registrations
-    (training_id, student_id, student_name, faculty, major, class_group, email, period, role, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-);
+$stmt = $conn->prepare("
+    INSERT INTO registrations
+    (user_id, training_id, student_id, student_name, faculty, major, class_group, email, period, role, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+");
 
 $stmt->bind_param(
-    "isssssssss",
+    "iisssssssss",
+    $user_id,
     $training_id,
     $student_id,
     $student_name,
@@ -107,6 +114,7 @@ $stmt->bind_param(
 
 $stmt->execute();
 
+/* ===== redirect กลับ ===== */
 $student_name_url = urlencode($student_name);
 header("Location: f_register_form.php?success=1&name=$student_name_url&id=$training_id&period=$period&date=$date");
 exit;
