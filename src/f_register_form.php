@@ -1,10 +1,10 @@
 <?php
 require_once __DIR__ . '/components/user_guard.php';
-require_once __DIR__ . '/db.php'; // === เพิ่ม ===
+require_once __DIR__ . '/db.php';
 
 $id     = (int)($_GET['id'] ?? 0);
 $period = $_GET['period'] ?? '';
-$date   = $_GET['date'] ?? '';
+$date   = $_GET['training_date'] ?? '';
 
 if ($id <= 0) {
     exit("ไม่พบข้อมูลการอบรม");
@@ -14,20 +14,28 @@ $user_id = $_SESSION['user_id'];
 $alreadyRegistered = false;
 
 $stmt = $conn->prepare("
-    SELECT r.id
-    FROM registrations r
-    JOIN trainings t ON t.id = r.training_id
-    WHERE r.user_id = ?
-      AND r.training_id = ?
-      AND t.date = ?
-      AND r.period = ?
+    SELECT id
+    FROM registrations
+    WHERE user_id = ?
+      AND training_id = ?
     LIMIT 1
 ");
-$stmt->bind_param("iiss", $user_id, $id, $date, $period);
+$stmt->bind_param("ii", $user_id, $id);
 $stmt->execute();
 $alreadyRegistered = $stmt->get_result()->num_rows > 0;
 
+
+// --- ดึง username จาก users แทน students ---
+$student_name = '';
+$stmt2 = $conn->prepare("SELECT username FROM users WHERE id = ? LIMIT 1");
+$stmt2->bind_param("i", $user_id);
+$stmt2->execute();
+$result = $stmt2->get_result();
+if ($row = $result->fetch_assoc()) {
+    $student_name = $row['username']; // ใช้ username เป็นชื่อ-นามสกุล
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -80,7 +88,7 @@ $alreadyRegistered = $stmt->get_result()->num_rows > 0;
             <p class="text-muted mb-3">
                 ระบบไม่อนุญาตให้ลงทะเบียนซ้ำ
             </p>
-            <a href="f_program_detail.php?date=<?= urlencode($date) ?>"
+            <a href="f_program_detail.php?training_date=<?= urlencode($date) ?>"
                class="btn btn-secondary">
                กลับไปหน้ารายการอบรม
             </a>
@@ -97,7 +105,7 @@ $alreadyRegistered = $stmt->get_result()->num_rows > 0;
           <!-- ส่งค่าไปบันทึก -->
           <input type="hidden" name="training_id" value="<?= htmlspecialchars($id) ?>">
           <input type="hidden" name="period" value="<?= htmlspecialchars($period) ?>">
-          <input type="hidden" name="date" value="<?= htmlspecialchars($date) ?>">
+          <input type="hidden" name="training_date" value="<?= htmlspecialchars($date) ?>">
           <input type="hidden" name="role" value="student">
 
           <h5 class="mb-3">ข้อมูลการอบรม</h5>
@@ -124,8 +132,9 @@ $alreadyRegistered = $stmt->get_result()->num_rows > 0;
           </div>
 
           <div class="mb-3">
-            <label class="form-label">ชื่อ - นามสกุล</label>
-            <input type="text" name="student_name" class="form-control" required>
+              <label class="form-label">ชื่อ - นามสกุล</label>
+              <input type="text" name="student_name" class="form-control bg-light" 
+                     value="<?= htmlspecialchars($student_name) ?>" readonly>
           </div>
 
           <div class="mb-3">
@@ -154,7 +163,7 @@ $alreadyRegistered = $stmt->get_result()->num_rows > 0;
             </button>
 
             <a class="btn btn-secondary w-50 btn-cancel"
-               href="f_program_detail.php?date=<?= urlencode($date) ?>">
+               href="f_program_detail.php?training_date=<?= urlencode($date) ?>">
                ยกเลิก
             </a>
           </div>
@@ -186,7 +195,7 @@ Swal.fire({
     `,
     confirmButtonText: 'ตกลง'
 }).then(() => {
-    window.location.href = "f_program_detail.php?date=<?= urlencode($date) ?>";
+    window.location.href = "f_program_detail.php?training_date=<?= urlencode($date) ?>";
 });
 </script>
 <?php endif; ?>

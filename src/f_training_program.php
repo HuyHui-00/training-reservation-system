@@ -129,7 +129,7 @@ $now = time();
 }
 
 /* mobile */
-@media (max-width: 768px) {
+@media (max-width: 576px) {
 
     table {
         display: none;
@@ -154,7 +154,7 @@ $now = time();
         color: #6b7280;
     }
 }
-@media (max-width: 768px) {
+@media (max-width: 576px) {
     .form-control,
     .btn {
         font-size: 15px;
@@ -255,7 +255,7 @@ $now = time();
           
         </ul>
       </nav>
-      <div class="table-responsive d-none d-md-block">
+      <div class="table-responsive d-none d-sm-block">
         <table class="table table-bordered table-striped align-middle text-center">
 
           <thead style="background:#1f2937;color:white;">
@@ -344,7 +344,7 @@ while ($row = $result->fetch_assoc()):
           </tbody>
         </table>
       </div>
-      <div class="d-md-none mt-3">
+      <div class="d-sm-none mt-3">
 
 <?php
 $index = 1;

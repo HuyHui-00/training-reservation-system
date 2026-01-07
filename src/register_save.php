@@ -33,6 +33,13 @@ if ($role === 'student') {
     if ($student_id === '' || $student_name === '' || $email === '') {
         exit('กรุณากรอกข้อมูลนักศึกษาให้ครบถ้วน');
     }
+    if (strlen($student_id) > 13) {
+    $error = 'รหัสนักศึกษาต้องไม่เกิน 13 ตัวอักษร';
+    // redirect กลับ form พร้อม error
+    $student_name_url = urlencode($student_name);
+    header("Location: f_register_form.php?error=" . urlencode($error) . "&name=$student_name_url&id=$training_id&period=$period&date=$date");
+    exit;
+    }
 } else {
     if ($student_name === '' || $email === '') {
         exit('กรุณากรอกข้อมูลอาจารย์ให้ครบถ้วน');
@@ -41,7 +48,7 @@ if ($role === 'student') {
 
 /* ===== ดึงข้อมูลหลักสูตร ===== */
 $stmt = $conn->prepare("
-    SELECT date, max_participants
+    SELECT training_date, max_participants
     FROM trainings
     WHERE id = ?
 ");
@@ -53,7 +60,7 @@ if (!$training) {
     exit("ไม่พบหลักสูตร");
 }
 
-$date = $training['date'];
+$date = $training['training_date'];
 $MAX  = (int)$training['max_participants'];
 
 /* ===== ตรวจสอบจำนวนที่นั่ง ===== */
@@ -78,7 +85,7 @@ $stmt = $conn->prepare("
     WHERE r.user_id = ?
       AND r.training_id = ?
       AND r.period = ?
-      AND t.date = ?
+      AND t.training_date = ?
     LIMIT 1
 ");
 $stmt->bind_param("iiss", $user_id, $training_id, $period, $date);

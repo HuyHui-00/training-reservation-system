@@ -2,9 +2,9 @@
 include 'db.php';
 require_once __DIR__ . '/components/user_guard.php';
 
-$date = $_GET['date'] ?? '';
+$date = $_GET['training_date'] ?? '';
 if (!$date) exit("ไม่พบข้อมูลหลักสูตร");
-$stmt = $conn->prepare("SELECT * FROM trainings WHERE date=? ORDER BY period ASC");
+$stmt = $conn->prepare("SELECT * FROM trainings WHERE training_date=? ORDER BY period ASC");
 $stmt->bind_param("s", $date);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -37,8 +37,8 @@ $afternoonFull = !empty($trainings['afternoon']) ? $afternoonCount >= $trainings
 
 // เช็ควันที่: หากวันที่การอบรมผ่านไปแล้ว (น้อยกว่า today) ให้ปิดการลงทะเบียน
 $today = date('Y-m-d');
-$morningAllowed = !empty($trainings['morning']) ? (strtotime($trainings['morning']['date']) >= strtotime($today)) : false;
-$afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['afternoon']['date']) >= strtotime($today)) : false;
+$morningAllowed = !empty($trainings['morning']) ? (strtotime($trainings['morning']['training_date']) >= strtotime($today)) : false;
+$afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['afternoon']['training_date']) >= strtotime($today)) : false;
 ?>
 
 <!DOCTYPE html>
@@ -87,13 +87,32 @@ $afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['aft
 <nav class="navbar navbar-expand-lg navbar-dark shadow-sm"
      style="background: linear-gradient(135deg, #2563eb, #1e40af);">
   <div class="container-fluid">
-    
-    <span class="navbar-brand fw-bold fs-4 d-flex align-items-center">
-      โครงงการอบรม
+
+    <!-- Brand -->
+    <span class="navbar-brand fw-bold fs-4">
+      โครงการอบรม
     </span>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+
+    <!-- Toggle (mobile) -->
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
     </button>
+
+    <!-- Menu -->
+    <div class="collapse navbar-collapse" id="navMenu">
+
+      <!-- ดันไปขวาสุด -->
+      <div class="ms-auto">
+        <a href="/logout.php"
+           id="btnLogout"
+           class="btn btn-outline-light btn-sm">
+           ออกจากระบบ
+        </a>
+      </div>
+
+    </div>
 
   </div>
 </nav>
@@ -112,7 +131,7 @@ $afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['aft
       <h5 class="mb-3 text-primary text-center">ข้อมูลช่วงเช้า</h5>
 
       <?php if (!empty($trainings['morning'])): $t = $trainings['morning']; ?>
-      <div class="mb-2"><strong>วันที่:</strong> <?= htmlspecialchars($t['date']) ?></div>
+      <div class="mb-2"><strong>วันที่:</strong> <?= htmlspecialchars($t['training_date']) ?></div>
       <div class="mb-2"><strong>หัวข้ออบรม:</strong> <?= htmlspecialchars($t['title']) ?></div>
       <div class="mb-2"><strong>รายละเอียด:</strong></div>
       <div class="border rounded p-2 mb-2 bg-light">
@@ -131,7 +150,7 @@ $afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['aft
           <span class="badge bg-danger p-2">เต็มแล้ว</span>
         <?php else: ?>
           <a class="btn btn-primary w-100"
-             href="f_register_form.php?id=<?= $t['id'] ?>&period=morning&date=<?= urlencode($t['date']) ?>">
+             href="f_register_form.php?id=<?= $t['id'] ?>&period=morning&training_date=<?= urlencode($t['training_date']) ?>">
              ลงทะเบียนช่วงเช้า
           </a>
         <?php endif; ?>
@@ -151,7 +170,7 @@ $afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['aft
       <h5 class="mb-3 text-primary text-center">ข้อมูลช่วงบ่าย</h5>
 
       <?php if (!empty($trainings['afternoon'])): $t = $trainings['afternoon']; ?>
-      <div class="mb-2"><strong>วันที่:</strong> <?= htmlspecialchars($t['date']) ?></div>
+      <div class="mb-2"><strong>วันที่:</strong> <?= htmlspecialchars($t['training_date']) ?></div>
       <div class="mb-2"><strong>หัวข้ออบรม:</strong> <?= htmlspecialchars($t['title']) ?></div>
       <div class="mb-2"><strong>รายละเอียด:</strong></div>
       <div class="border rounded p-2 mb-2 bg-light">
@@ -170,7 +189,7 @@ $afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['aft
           <span class="badge bg-danger p-2">เต็มแล้ว</span>
         <?php else: ?>
           <a class="btn btn-primary w-100"
-             href="f_register_form.php?id=<?= $t['id'] ?>&period=afternoon&date=<?= urlencode($t['date']) ?>">
+             href="f_register_form.php?id=<?= $t['id'] ?>&period=afternoon&training_date=<?= urlencode($t['training_date']) ?>">
              ลงทะเบียนช่วงบ่าย
           </a>
         <?php endif; ?>
