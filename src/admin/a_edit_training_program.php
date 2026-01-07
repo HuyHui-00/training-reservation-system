@@ -6,7 +6,7 @@ $date = $_GET['training_date'] ?? '';
 if (!$date) exit("ไม่พบข้อมูลหลักสูตร");
 
 /* ======================== ดึงข้อมูล ======================== */
-$stmt = $conn->prepare("SELECT * FROM trainings WHERE date=? ORDER BY period ASC");
+$stmt = $conn->prepare("SELECT * FROM trainings WHERE training_date=? ORDER BY period ASC");
 $stmt->bind_param("s", $date);
 $stmt->execute();
 $result = $stmt->get_result();
