@@ -37,7 +37,7 @@ if ($role === 'student') {
     $error = 'รหัสนักศึกษาต้องไม่เกิน 13 ตัวอักษร';
     // redirect กลับ form พร้อม error
     $student_name_url = urlencode($student_name);
-    header("Location: f_register_form.php?error=" . urlencode($error) . "&name=$student_name_url&id=$training_id&period=$period&date=$date");
+    header("Location: f_register_form.php?error=" . urlencode($error) . "&name=$student_name_url&id=$training_id&period=$period&training_date=$date");
     exit;
     }
 } else {
@@ -88,7 +88,7 @@ $stmt = $conn->prepare("
       AND t.training_date = ?
     LIMIT 1
 ");
-$stmt->bind_param("iiss", $user_id, $training_id, $period, $date);
+$stmt->bind_param("iiss", $user_id, $training_id, $period, $training_date);
 $stmt->execute();
 
 if ($stmt->get_result()->num_rows > 0) {
@@ -123,5 +123,5 @@ $stmt->execute();
 
 /* ===== redirect กลับ ===== */
 $student_name_url = urlencode($student_name);
-header("Location: f_register_form.php?success=1&name=$student_name_url&id=$training_id&period=$period&date=$date");
+header("Location: f_register_form.php?success=1&name=$student_name_url&id=$training_id&period=$period&training_date=$date");
 exit;
