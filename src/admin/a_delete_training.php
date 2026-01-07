@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db.php';
+require_once __DIR__ . '/../db.php';
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit("Invalid request");
@@ -12,8 +12,6 @@ if ($date === '') {
     exit("ไม่พบวันที่");
 }
 
-
-// ลบข้อมูลตามวันที่
 $stmt = $conn->prepare("DELETE FROM trainings WHERE training_date = ?");
 $stmt->bind_param("s", $date);
 $stmt->execute();

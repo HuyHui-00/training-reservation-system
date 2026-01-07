@@ -268,7 +268,7 @@ $afternoon = $row['afternoon_title'];
     <div class="d-flex justify-content-center gap-2">
       <a href="/admin/a_program_detail.php?training_date=<?= $date ?>" class="btn btn-primary btn-sm">📌</a>
       <form method="POST" action="/admin/a_delete_training.php">
-        <input type="hidden" name="date" value="<?= $date ?>">
+        <input type="hidden" name="training_date" value="<?= $date ?>">
         <button type="submit" class="btn btn-danger btn-sm delete-btn">🗑️</button>
       </form>
     </div>
@@ -347,8 +347,8 @@ $afternoon = $row['afternoon_title'];
                 <a href="/admin/a_program_detail.php?training_date=<?= $date ?>" class="btn btn-primary btn-sm flex-fill">
                   ดูรายละเอียด
                 </a>
-                <form method="POST" action="a_delete_training.php" class="flex-fill">
-                  <input type="hidden" name="date" value="<?= $date ?>">
+                <form method="POST" action="/admin/a_delete_training.php" class="flex-fill">
+                  <input type="hidden" name="training_date" value="<?= $date ?>">
                   <button type="submit" class="btn btn-danger btn-sm w-100 delete-btn">
                     ลบ
                   </button>
