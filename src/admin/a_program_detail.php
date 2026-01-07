@@ -3,10 +3,10 @@ require_once __DIR__ . '/../components/admin_guard.php';
 require_once __DIR__ . '/../db.php';
 
 
-$date = $_GET['date'] ?? '';
+$date = $_GET['training_date'] ?? '';
 if (!$date) exit("ไม่พบข้อมูลหลักสูตร");
 
-$stmt = $conn->prepare("SELECT * FROM trainings WHERE date=? ORDER BY period ASC");
+$stmt = $conn->prepare("SELECT * FROM trainings WHERE training_date=? ORDER BY period ASC");
 $stmt->bind_param("s", $date);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -35,8 +35,8 @@ $morningCount   = !empty($trainings['morning']) ? countRegister($conn, $training
 $afternoonCount = !empty($trainings['afternoon']) ? countRegister($conn, $trainings['afternoon']['id'], 'afternoon') : 0;
 
 $today = date('Y-m-d');
-$morningAllowed   = !empty($trainings['morning'])   ? (strtotime($trainings['morning']['date'])   >= strtotime($today)) : false;
-$afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['afternoon']['date']) >= strtotime($today)) : false;
+$morningAllowed   = !empty($trainings['morning'])   ? (strtotime($trainings['morning']['training_date'])   >= strtotime($today)) : false;
+$afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['afternoon']['training_date']) >= strtotime($today)) : false;
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -70,7 +70,7 @@ $afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['aft
 
 <div class="mb-3 d-flex justify-content-between">
   <a href="a_training_program.php" class="btn btn-secondary">ย้อนกลับ</a>
-  <a href="/admin/a_edit_training_program.php?date=<?= urlencode($date) ?>" class="btn btn-warning">แก้ไข</a>
+  <a href="/admin/a_edit_training_program.php?training_date=<?= urlencode($date) ?>" class="btn btn-warning">แก้ไข</a>
 </div>
 
 <div class="row">
@@ -82,7 +82,7 @@ $afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['aft
 
     <?php if (!empty($trainings['morning'])): $t = $trainings['morning']; ?>
 
-      <div class="mb-2"><strong>วันที่:</strong> <?= htmlspecialchars($t['date']) ?></div>
+      <div class="mb-2"><strong>วันที่:</strong> <?= htmlspecialchars($t['training_date']) ?></div>
       <div class="mb-2"><strong>หัวข้ออบรม:</strong> <?= htmlspecialchars($t['title']) ?></div>
 
       <div class="mb-1"><strong>รายละเอียด:</strong></div>
@@ -97,7 +97,7 @@ $afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['aft
         <?= $morningCount ?> / <?= $t['max_participants'] ?> คน
       </div>
 
-      <a href="/admin/a_participants_training_detail.php?date=<?= urlencode($date) ?>&period=morning"
+      <a href="/admin/a_participants_training_detail.php?training_date=<?= urlencode($date) ?>&period=morning"
          class="btn btn-outline-primary btn-sm w-100">
         ดูรายละเอียดผู้เข้าร่วม
       </a>
@@ -117,7 +117,7 @@ $afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['aft
 
     <?php if (!empty($trainings['afternoon'])): $t = $trainings['afternoon']; ?>
 
-      <div class="mb-2"><strong>วันที่:</strong> <?= htmlspecialchars($t['date']) ?></div>
+      <div class="mb-2"><strong>วันที่:</strong> <?= htmlspecialchars($t['training_date']) ?></div>
       <div class="mb-2"><strong>หัวข้ออบรม:</strong> <?= htmlspecialchars($t['title']) ?></div>
 
       <div class="mb-1"><strong>รายละเอียด:</strong></div>
@@ -132,7 +132,7 @@ $afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['aft
         <?= $afternoonCount ?> / <?= $t['max_participants'] ?> คน
       </div>
 
-      <a href="a_participants_training_detail.php?date=<?= urlencode($date) ?>&period=afternoon"
+      <a href="a_participants_training_detail.php?training_date=<?= urlencode($date) ?>&period=afternoon"
          class="btn btn-outline-primary btn-sm w-100">
         ดูรายละเอียดผู้เข้าร่วม
       </a>

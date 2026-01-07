@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../components/admin_guard.php';
 require_once __DIR__ . '/../db.php';
 
-$date = $_GET['date'] ?? '';
+$date = $_GET['training_date'] ?? '';
 if (!$date) exit("ไม่พบข้อมูลหลักสูตร");
 
 /* ======================== ดึงข้อมูล ======================== */
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id = $trainings['morning']['id'];
         $stmt = $conn->prepare("
             UPDATE trainings 
-            SET date=?, period=?, title=?, speaker=?, location=?, detail=?, max_participants=? 
+            SET training_date=?, period=?, title=?, speaker=?, location=?, detail=?, max_participants=? 
             WHERE id=?
         ");
         $stmt->bind_param(
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id = $trainings['afternoon']['id'];
         $stmt = $conn->prepare("
             UPDATE trainings 
-            SET date=?, period=?, title=?, speaker=?, location=?, detail=?, max_participants=? 
+            SET training_date=?, period=?, title=?, speaker=?, location=?, detail=?, max_participants=? 
             WHERE id=?
         ");
         $stmt->bind_param(
@@ -161,7 +161,7 @@ textarea {
 
                         <div class="mb-2">
                             <label>วันที่</label>
-                            <input type="date" name="morning_date" class="form-control" value="<?= $t['date'] ?>" required>
+                            <input type="date" name="morning_date" class="form-control" value="<?= $t['training_date'] ?>" required>
                         </div>
 
                         <div class="mb-2">
@@ -213,7 +213,7 @@ textarea {
 
                         <div class="mb-2">
                             <label>วันที่</label>
-                            <input type="date" name="afternoon_date" class="form-control" value="<?= $t['date'] ?>">
+                            <input type="date" name="afternoon_date" class="form-control" value="<?= $t['training_date'] ?>">
                         </div>
 
                         <div class="mb-2">

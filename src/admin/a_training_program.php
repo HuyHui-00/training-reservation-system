@@ -44,7 +44,7 @@ if ($start_date !== '' && $end_date !== '') {
 
 $sql = "
   SELECT 
-    date,
+    training_date,
     MAX(CASE WHEN period = 'morning' THEN title END) AS morning_title,
     MAX(CASE WHEN period = 'afternoon' THEN title END) AS afternoon_title
   FROM trainings
@@ -54,7 +54,7 @@ if (!empty($where)) {
   $sql .= ' WHERE ' . implode(' AND ', $where);
 }
 
-$sql .= "\n    GROUP BY date\n    ORDER BY date ASC\n";
+$sql .= "\n    GROUP BY training_date\n    ORDER BY training_date ASC\n";
 
 $stmt = $conn->prepare($sql);
 if ($stmt === false) {
@@ -84,7 +84,7 @@ function thaiDate($date) {
 }
 // helper: ดึง training โดย date+period
 function getTraining($conn, $date, $period) {
-  $stmt = $conn->prepare("SELECT * FROM trainings WHERE date=? AND period=? LIMIT 1");
+  $stmt = $conn->prepare("SELECT * FROM trainings WHERE training_date=? AND period=? LIMIT 1");
   $stmt->bind_param("ss", $date, $period);
   $stmt->execute();
   return $stmt->get_result()->fetch_assoc();
@@ -209,7 +209,7 @@ Swal.fire({
 <?php
 $index = 1;
 while ($row = $result->fetch_assoc()):
-$date = $row['date'];
+$date = $row['training_date'];
 $morning = $row['morning_title'];
 $afternoon = $row['afternoon_title'];
 ?>
@@ -228,7 +228,7 @@ $afternoon = $row['afternoon_title'];
         }
       } else {
         $mCount = countRegister($conn, $mRow['id'], 'morning');
-        $end_ts = strtotime($mRow['date'] . ' 12:00:00');
+        $end_ts = strtotime($mRow['training_date'] . ' 12:00:00');
         if ($now > $end_ts) {
           $status = "<span class='badge bg-info text-white ms-2'>อบรมสำเร็จ</span>";
         } elseif ($mCount >= $mRow['max_participants']) {
@@ -252,7 +252,7 @@ $afternoon = $row['afternoon_title'];
         }
       } else {
         $aCount = countRegister($conn, $aRow['id'], 'afternoon');
-        $end_ts = strtotime($aRow['date'] . ' 17:00:00');
+        $end_ts = strtotime($aRow['training_date'] . ' 17:00:00');
         if ($now > $end_ts) {
           $status = "<span class='badge bg-info text-white ms-2'>อบรมสำเร็จ</span>";
         } elseif ($aCount >= $aRow['max_participants']) {
@@ -266,7 +266,7 @@ $afternoon = $row['afternoon_title'];
     </td>
   <td>
     <div class="d-flex justify-content-center gap-2">
-      <a href="/admin/a_program_detail.php?date=<?= $date ?>" class="btn btn-primary btn-sm">📌</a>
+      <a href="/admin/a_program_detail.php?training_date=<?= $date ?>" class="btn btn-primary btn-sm">📌</a>
       <form method="POST" action="am_delete_training.php">
         <input type="hidden" name="date" value="<?= $date ?>">
         <button type="submit" class="btn btn-danger btn-sm delete-btn">🗑️</button>
@@ -284,7 +284,7 @@ $afternoon = $row['afternoon_title'];
 <?php
 $result->data_seek(0);
 while ($row = $result->fetch_assoc()):
-$date = $row['date'];
+$date = $row['training_date'];
 $morning = $row['morning_title'];
 $afternoon = $row['afternoon_title'];
 ?>
@@ -306,7 +306,7 @@ $afternoon = $row['afternoon_title'];
                     }
                   } else {
                     $mCount = countRegister($conn, $mRow['id'], 'morning');
-                    $end_ts = strtotime($mRow['date'] . ' 12:00:00');
+                    $end_ts = strtotime($mRow['training_date'] . ' 12:00:00');
                     if ($now > $end_ts) {
                       $status = "<span class='badge bg-info text-white ms-2'>อบรมสำเร็จ</span>";
                     } elseif ($mCount >= $mRow['max_participants']) {
@@ -331,7 +331,7 @@ $afternoon = $row['afternoon_title'];
                     }
                   } else {
                     $aCount = countRegister($conn, $aRow['id'], 'afternoon');
-                    $end_ts = strtotime($aRow['date'] . ' 17:00:00');
+                    $end_ts = strtotime($aRow['training_date'] . ' 17:00:00');
                     if ($now > $end_ts) {
                       $status = "<span class='badge bg-info text-white ms-2'>อบรมสำเร็จ</span>";
                     } elseif ($aCount >= $aRow['max_participants']) {
@@ -344,7 +344,7 @@ $afternoon = $row['afternoon_title'];
                 ?>
                 </div>
               <div class="d-flex gap-2">
-                <a href="/admin/a_program_detail.php?date=<?= $date ?>" class="btn btn-primary btn-sm flex-fill">
+                <a href="/admin/a_program_detail.php?training_date=<?= $date ?>" class="btn btn-primary btn-sm flex-fill">
                   ดูรายละเอียด
                 </a>
                 <form method="POST" action="a_delete_training.php" class="flex-fill">

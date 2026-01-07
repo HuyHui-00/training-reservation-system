@@ -15,13 +15,13 @@ if ($name === '') {
 $sql = "
     SELECT 
         t.title,
-        t.date,
+        t.training_date,
         r.period
     FROM registrations r
     JOIN trainings t ON t.id = r.training_id
     WHERE r.role = 'teacher'
       AND r.name = ?
-    ORDER BY t.date DESC
+    ORDER BY t.training_date DESC
 ";
 
 $stmt = $conn->prepare($sql);
@@ -104,7 +104,7 @@ function thaiDate($date) {
         <div class="card-body">
           <strong><?= htmlspecialchars($it['title']) ?></strong><br>
           <small class="text-muted">
-            <?= thaiDate($it['date']) ?> •
+            <?= thaiDate($it['training_date']) ?> •
             <?= $it['period'] === 'morning' ? 'ช่วงเช้า' : 'ช่วงบ่าย' ?>
           </small>
         </div>

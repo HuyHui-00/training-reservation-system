@@ -5,7 +5,7 @@ require_once __DIR__ . '/../db.php';
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 /* ===== รับค่า ===== */
-$date   = $_GET['date']   ?? '';
+$date   = $_GET['training_date']   ?? '';
 $period = $_GET['period'] ?? '';
 $q      = trim($_GET['q'] ?? '');
 $page   = max(1, (int)($_GET['page'] ?? 1));
@@ -21,7 +21,7 @@ $offset = ($page - 1) * $limit;
 $stmt = $conn->prepare("
     SELECT title 
     FROM trainings 
-    WHERE date = ? AND period = ?
+    WHERE training_date = ? AND period = ?
     LIMIT 1
 ");
 $stmt->bind_param("ss", $date, $period);
@@ -35,7 +35,7 @@ if (!$training) {
 $title = $training['title'];
 
 /* ===== เงื่อนไขค้นหา ===== */
-$where  = "r.period = ? AND t.date = ?";
+$where  = "r.period = ? AND t.training_date = ?";
 $types  = 'ss';
 $params = [$period, $date];
 
@@ -118,7 +118,7 @@ $result = $stmt->get_result();
 
   <div class="d-flex justify-content-between al ign-items-center mb-3">
     <span class="text-muted">พบทั้งหมด <?= $total ?> คน</span>
-    <a href="/admin/a_program_detail.php?date=<?= urlencode($date) ?>" class="btn btn-outline-secondary btn-sm">กลับ</a>
+    <a href="/admin/a_program_detail.php?training_date=<?= urlencode($date) ?>" class="btn btn-outline-secondary btn-sm">กลับ</a>
   </div>
 
   <!-- ค้นหา -->
@@ -158,7 +158,7 @@ $result = $stmt->get_result();
             <?php for ($p = 1; $p <= $totalPages; $p++): ?>
               <li class="page-item <?= $p == $page ? 'active' : '' ?>">
                 <a class="page-link"
-                   href="?date=<?= urlencode($date) ?>&period=<?= urlencode($period) ?>&q=<?= urlencode($q) ?>&page=<?= $p ?>">
+                   href="?training_date=<?= urlencode($date) ?>&period=<?= urlencode($period) ?>&q=<?= urlencode($q) ?>&page=<?= $p ?>">
                   <?= $p ?>
                 </a>
               </li>
