@@ -11,7 +11,7 @@ $date = $_POST['training_date'] ?? '';
 if ($date === '') {
     exit("ไม่พบวันที่");
 }
-}
+
 
 // ลบข้อมูลตามวันที่
 $stmt = $conn->prepare("DELETE FROM trainings WHERE training_date = ?");
