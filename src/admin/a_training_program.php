@@ -267,7 +267,7 @@ $afternoon = $row['afternoon_title'];
   <td>
     <div class="d-flex justify-content-center gap-2">
       <a href="/admin/a_program_detail.php?training_date=<?= $date ?>" class="btn btn-primary btn-sm">📌</a>
-      <form method="POST" action="am_delete_training.php">
+      <form method="POST" action="/admin/a_delete_training.php">
         <input type="hidden" name="date" value="<?= $date ?>">
         <button type="submit" class="btn btn-danger btn-sm delete-btn">🗑️</button>
       </form>
