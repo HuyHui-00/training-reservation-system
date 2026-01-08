@@ -456,7 +456,6 @@ document.addEventListener("DOMContentLoaded", () => {
         cancelButtonText: 'ยกเลิก'
       }).then((result) => {
         if (result.isConfirmed) {
-          // เก็บสถานะไว้โชว์ alert หลัง logout
           localStorage.setItem("logout_success", "1");
           window.location.href = "/logout.php";
         }

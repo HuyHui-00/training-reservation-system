@@ -31,7 +31,7 @@
 
     <ul class="nav flex-column">
       <li class="nav-item">
-        <a class="nav-link text-danger px-0" href="user_login.php">
+        <a class="nav-link text-danger px-0" href="/logout.php">
           ออกจากระบบ
         </a>
       </li>
