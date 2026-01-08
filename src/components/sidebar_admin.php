@@ -31,7 +31,7 @@
 
     <ul class="nav flex-column">
       <li class="nav-item">
-        <a class="nav-link text-danger px-0" href="/logout.php">
+        <a class="nav-link text-danger px-0" href="/logout.php" id="adminLogoutBtn">
           ออกจากระบบ
         </a>
       </li>
@@ -51,3 +51,28 @@
     background-color: #1f2937;
   }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const logoutBtn = document.getElementById('adminLogoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      Swal.fire({
+        title: 'ยืนยันการออกจากระบบ',
+        text: 'คุณต้องการออกจากระบบใช่หรือไม่?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'ออกจากระบบ',
+        cancelButtonText: 'ยกเลิก'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = '/logout.php';
+        }
+      });
+    });
+  }
+});
+</script>
