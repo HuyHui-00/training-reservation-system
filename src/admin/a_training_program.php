@@ -158,12 +158,6 @@ Swal.fire({
 <div class="container-fluid mt-4">
   <div class="container">
 
-    <div class="d-flex justify-content-end mb-3">
-      <a href="/admin/a_add_training.php" class="btn btn-success rounded-pill px-4 shadow-sm">
-        เพิ่มหลักสูตรอบรม
-      </a>
-    </div>
-
     <div class="card shadow-sm">
       <div class="card-header fw-bold fs-5 text-white"
            style="background: linear-gradient(135deg, #0d6efd, #0b5ed7);">

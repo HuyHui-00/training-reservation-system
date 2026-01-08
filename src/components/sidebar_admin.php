@@ -20,6 +20,11 @@
         จัดการบัญชีผู้ใช้
       </a>
 
+      <a href="/admin/a_add_training.php"
+         class="list-group-item list-group-item-action bg-dark text-white border-secondary">
+        เพิ่มหลักสูตรอบรม
+      </a>
+
     </div>
 
     <hr class="border-secondary my-4">

@@ -9,11 +9,11 @@ $success = '';
 $editMode = false;
 $editData = null;
 
-// ======== แก้ไขข้อมูล ========
+/* ======== แก้ไขข้อมูล ======== */
 if (isset($_GET['edit'])) {
     $editId = (int)$_GET['edit'];
     $stmt = $conn->prepare(
-        "SELECT id, username, role 
+        "SELECT id, username, email, role 
          FROM users 
          WHERE id = ? AND role = 'Admin'"
     );
@@ -26,7 +26,7 @@ if (isset($_GET['edit'])) {
     }
 }
 
-// ======== ลบข้อมูล ========
+/* ======== ลบข้อมูล ======== */
 if (isset($_GET['delete'])) {
     $deleteId = (int)$_GET['delete'];
     if ($deleteId != $_SESSION['user_id']) {
@@ -41,62 +41,75 @@ if (isset($_GET['delete'])) {
     }
 }
 
-// ======== บันทึกข้อมูล ========
+/* ======== บันทึกข้อมูล ======== */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     $username = trim($_POST['username'] ?? '');
+    $email    = trim($_POST['email'] ?? '');
     $password = trim($_POST['password'] ?? '');
     $confirm  = trim($_POST['confirm'] ?? '');
-    $role = 'Admin';
+    $role     = 'Admin';
     $editId   = (int)($_POST['edit_id'] ?? 0);
 
-    if ($username === '') {
-        $error = 'กรุณากรอกชื่อผู้ใช้';
+    if ($username === '' || $email === '') {
+        $error = 'กรุณากรอกข้อมูลให้ครบ';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = 'รูปแบบอีเมลไม่ถูกต้อง';
     } elseif ($editId > 0) {
-        // โหมดแก้ไข
+
+        /* ===== โหมดแก้ไข ===== */
         if ($password !== '') {
             if ($password !== $confirm) {
                 $error = 'รหัสผ่านไม่ตรงกัน';
             } else {
                 $hashed = password_hash($password, PASSWORD_DEFAULT);
                 $stmt = $conn->prepare(
-                    "UPDATE users SET username = ?, password = ? WHERE id = ?"
+                    "UPDATE users 
+                     SET username = ?, email = ?, password = ? 
+                     WHERE id = ?"
                 );
-                $stmt->bind_param("ssi", $username, $hashed, $editId);
+                $stmt->bind_param("sssi", $username, $email, $hashed, $editId);
                 $stmt->execute();
                 $success = 'แก้ไขข้อมูลเรียบร้อยแล้ว';
                 $editMode = false;
             }
         } else {
             $stmt = $conn->prepare(
-                "UPDATE users SET username = ? WHERE id = ?"
+                "UPDATE users 
+                 SET username = ?, email = ? 
+                 WHERE id = ?"
             );
-            $stmt->bind_param("si", $username, $editId);
+            $stmt->bind_param("ssi", $username, $email, $editId);
             $stmt->execute();
             $success = 'แก้ไขข้อมูลเรียบร้อยแล้ว';
             $editMode = false;
         }
+
     } else {
-        // โหมดเพิ่มใหม่
+
+        /* ===== โหมดเพิ่มใหม่ ===== */
         if ($password === '' || $confirm === '') {
             $error = 'กรุณากรอกข้อมูลให้ครบ';
         } elseif ($password !== $confirm) {
             $error = 'รหัสผ่านไม่ตรงกัน';
         } else {
-            $stmt = $conn->prepare(
-                "SELECT id FROM users WHERE username = ?"
-            );
-            $stmt->bind_param("s", $username);
-            $stmt->execute();
-            $exists = $stmt->get_result()->num_rows;
 
-            if ($exists > 0) {
-                $error = 'ชื่อผู้ใช้นี้มีอยู่แล้ว';
+            // เช็ก username หรือ email ซ้ำ
+            $stmt = $conn->prepare(
+                "SELECT id FROM users WHERE username = ? OR email = ?"
+            );
+            $stmt->bind_param("ss", $username, $email);
+            $stmt->execute();
+
+            if ($stmt->get_result()->num_rows > 0) {
+                $error = 'Username หรือ Email นี้ถูกใช้งานแล้ว';
             } else {
                 $hashed = password_hash($password, PASSWORD_DEFAULT);
                 $stmt = $conn->prepare(
-                    "INSERT INTO users (username, password, role) VALUES (?, ?, ?)"
+                    "INSERT INTO users (username, email, password, role)
+                     VALUES (?, ?, ?, ?)"
                 );
-                $stmt->bind_param("sss", $username, $hashed, $role);
+                $stmt->bind_param("ssss", $username, $email, $hashed, $role);
                 $stmt->execute();
                 $success = 'เพิ่มบัญชีผู้ดูแลระบบเรียบร้อยแล้ว';
             }
@@ -104,14 +117,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// ดึงรายชื่อบัญชีทั้งหมด
+/* ======== ดึงรายชื่อ ======== */
 $users = $conn->query(
-    "SELECT id, username, role 
+    "SELECT id, username, email, role 
      FROM users 
      WHERE role = 'Admin' 
      ORDER BY id ASC"
 );
 ?>
+
 <!doctype html>
 <html lang="th">
 <head>
@@ -173,7 +187,13 @@ $users = $conn->query(
             <input type="text" name="username" class="form-control"
               value="<?= $editMode ? htmlspecialchars($editData['username']) : '' ?>" required>
           </div>
-
+                
+          <div class="col-md-4">
+            <label class="form-label small">Email</label>
+            <input type="email" name="email" class="form-control"
+              value="<?= $editMode ? htmlspecialchars($editData['email']) : '' ?>" required>
+          </div>
+                
           <div class="col-md-4">
             <label class="form-label small">
               Password <?= $editMode ? '(เว้นว่างหากไม่เปลี่ยน)' : '' ?>
@@ -181,7 +201,7 @@ $users = $conn->query(
             <input type="password" name="password" class="form-control"
               <?= $editMode ? '' : 'required' ?>>
           </div>
-
+                
           <div class="col-md-4">
             <label class="form-label small">
               Confirm Password <?= $editMode ? '(เว้นว่างหากไม่เปลี่ยน)' : '' ?>
@@ -190,6 +210,7 @@ $users = $conn->query(
               <?= $editMode ? '' : 'required' ?>>
           </div>
         </div>
+                
 
         <div class="mt-3">
           <button type="submit" class="btn btn-primary">
