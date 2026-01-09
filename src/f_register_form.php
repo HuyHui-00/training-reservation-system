@@ -44,6 +44,7 @@ if ($row = $result->fetch_assoc()) {
 <title>ลงทะเบียนอบรม</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 <style>
   .form-container {
@@ -69,6 +70,15 @@ if ($row = $result->fetch_assoc()) {
     <span class="navbar-brand fw-bold fs-4 d-flex align-items-center">
       โครงการอบรม
     </span>
+    
+    <div class="ms-auto d-flex align-items-center">
+        <a href="f_profile.php" class="text-white text-decoration-none me-3 fw-bold">
+            <i class="bi bi-person-circle"></i> <?= htmlspecialchars($_SESSION['username'] ?? 'User') ?>
+        </a>
+        <a href="/logout.php" class="btn btn-outline-light btn-sm">
+           ออกจากระบบ
+        </a>
+    </div>
   </div>
 </nav>
 

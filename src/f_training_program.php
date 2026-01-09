@@ -121,6 +121,7 @@ $now = time();
 <title>ระบบลงทะเบียนอบรม</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 <style>
 /* desktop / tablet */
@@ -187,7 +188,10 @@ $now = time();
     <div class="collapse navbar-collapse" id="navMenu">
 
       <!-- ดันไปขวาสุด -->
-      <div class="ms-auto">
+      <div class="ms-auto d-flex align-items-center">
+        <a href="f_profile.php" class="text-white text-decoration-none me-3 fw-bold">
+            <i class="bi bi-person-circle"></i> <?= htmlspecialchars($_SESSION['username'] ?? 'User') ?>
+        </a>
         <a href="/logout.php"
            id="btnLogout"
            class="btn btn-outline-light btn-sm">
