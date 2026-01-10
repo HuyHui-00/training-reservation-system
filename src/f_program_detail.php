@@ -40,12 +40,12 @@ $now = time();
 
 $morningAllowed = false;
 if (!empty($trainings['morning'])) {
-    $morningAllowed = $now < strtotime($trainings['morning']['training_date'] . ' 12:00:00');
+    $morningAllowed = $now < strtotime($trainings['morning']['training_date'] . ' 10:30:00');
 }
 
 $afternoonAllowed = false;
 if (!empty($trainings['afternoon'])) {
-    $afternoonAllowed = $now < strtotime($trainings['afternoon']['training_date'] . ' 17:00:00');
+    $afternoonAllowed = $now < strtotime($trainings['afternoon']['training_date'] . ' 13:30:00');
 }
 ?>
 
