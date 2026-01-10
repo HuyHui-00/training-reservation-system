@@ -14,6 +14,8 @@ $keyword = trim($_GET['keyword'] ?? '');
 $start_date = $_GET['start_date'] ?? '';
 $end_date = $_GET['end_date'] ?? '';
 
+$today = date('Y-m-d');
+
 // Build dynamic WHERE clause and params for prepared statement
 $where = [];
 $types = '';
@@ -28,18 +30,24 @@ if ($keyword !== '') {
 }
 
 if ($start_date !== '' && $end_date !== '') {
-  $where[] = "date BETWEEN ? AND ?";
+  $where[] = "training_date BETWEEN ? AND ?";
   $types .= 'ss';
   $params[] = $start_date;
   $params[] = $end_date;
 } elseif ($start_date !== '') {
-  $where[] = "date >= ?";
+  $where[] = "training_date >= ?";
   $types .= 's';
   $params[] = $start_date;
 } elseif ($end_date !== '') {
-  $where[] = "date <= ?";
+  $where[] = "training_date <= ?";
   $types .= 's';
   $params[] = $end_date;
+} else {
+  if ($keyword === '') {
+    $where[] = "training_date >= ?";
+    $types .= 's';
+    $params[] = $today;
+  }
 }
 
 $sql = "
@@ -192,23 +200,20 @@ Swal.fire({
           <table class="table table-bordered table-striped align-middle text-center">
             <thead style="background:#1f2937;color:white;">
               <tr>
-                <th style="width:60px;">ลำดับ</th>
-                <th style="width:180px;">วันที่</th>
-                <th>ช่วงเช้า</th>
-                <th>ช่วงบ่าย</th>
-                <th style="width:140px;">จัดการ</th>
+                <th style="min-width:120px;">วันที่</th>
+                <th style="min-width:150px;">ช่วงเช้า</th>
+                <th style="min-width:150px;">ช่วงบ่าย</th>
+                <th style="min-width:140px;">จัดการ</th>
               </tr>
             </thead>
             <tbody>
 <?php
-$index = 1;
 while ($row = $result->fetch_assoc()):
 $date = $row['training_date'];
 $morning = $row['morning_title'];
 $afternoon = $row['afternoon_title'];
 ?>
 <tr>
-  <td><?= $index++ ?></td>
   <td><?= thaiDate($date) ?></td>
     <td>
     <?php
@@ -230,7 +235,7 @@ $afternoon = $row['afternoon_title'];
         } else {
           $status = "<span class='badge bg-success ms-2'>ว่าง</span>";
         }
-        echo htmlspecialchars(limitText($mRow['title'], 40)) . $status;
+        echo htmlspecialchars(limitText($mRow['title'], 40)) . ' ' . $status;
       }
     ?>
     </td>
@@ -254,7 +259,7 @@ $afternoon = $row['afternoon_title'];
         } else {
           $status = "<span class='badge bg-success ms-2'>ว่าง</span>";
         }
-        echo htmlspecialchars(limitText($aRow['title'], 40)) . $status;
+        echo htmlspecialchars(limitText($aRow['title'], 40)) . ' ' . $status;
       }
     ?>
     </td>
