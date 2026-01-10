@@ -170,40 +170,19 @@ $now = time();
 
 </head>
 <body class="bg-light">
+<?php include __DIR__ . '/components/sidebar_user.php'; ?>
 
 <nav class="navbar navbar-expand-lg navbar-dark shadow-sm"
      style="background: linear-gradient(135deg, #2563eb, #1e40af);">
   <div class="container-fluid">
-
-    <!-- Brand -->
-    <span class="navbar-brand fw-bold fs-4">
-      โครงการอบรม
-    </span>
-
-    <!-- Toggle (mobile) -->
-    <button class="navbar-toggler" type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navMenu">
-      <span class="navbar-toggler-icon"></span>
+    <button class="btn btn-outline-light me-2" 
+            type="button" 
+            data-bs-toggle="offcanvas" 
+            data-bs-target="#userSidebar" 
+            aria-controls="userSidebar">
+      ☰ เมนู
     </button>
-
-    <!-- Menu -->
-    <div class="collapse navbar-collapse" id="navMenu">
-
-      <!-- ดันไปขวาสุด -->
-      <div class="ms-auto d-flex align-items-center">
-        <a href="f_profile.php" class="text-white text-decoration-none me-3 fw-bold">
-            <i class="bi bi-person-circle"></i> <?= htmlspecialchars($_SESSION['username'] ?? 'User') ?>
-        </a>
-        <a href="/logout.php"
-           id="btnLogout"
-           class="btn btn-outline-light btn-sm">
-           ออกจากระบบ
-        </a>
-      </div>
-
-    </div>
-
+    <span class="navbar-brand fw-bold fs-4">โครงการอบรม</span>
   </div>
 </nav>
 
@@ -439,36 +418,6 @@ if (empty($aRow)) {
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-
-  const logoutBtn = document.getElementById("btnLogout");
-
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", function (e) {
-      e.preventDefault(); // ❌ ไม่ให้ redirect ทันที
-
-      Swal.fire({
-        title: 'ยืนยันการออกจากระบบ',
-        text: 'คุณต้องการออกจากระบบใช่หรือไม่?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc2626',
-        cancelButtonColor: '#6b7280',
-        confirmButtonText: 'ออกจากระบบ',
-        cancelButtonText: 'ยกเลิก'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          localStorage.setItem("logout_success", "1");
-          window.location.href = "/logout.php";
-        }
-      });
-    });
-  }
-
-});
-</script>
-
 
 </body>
 </html>
