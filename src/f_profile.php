@@ -62,13 +62,36 @@ $history = $stmt_hist->get_result();
 <nav class="navbar navbar-expand-lg navbar-dark shadow-sm"
      style="background: linear-gradient(135deg, #2563eb, #1e40af);">
   <div class="container-fluid">
-    <span class="navbar-brand fw-bold fs-4">โครงการอบรม</span>
-    <div class="ms-auto d-flex align-items-center">
+
+    <!-- Brand -->
+    <span class="navbar-brand fw-bold fs-4">
+      โครงการอบรม
+    </span>
+
+    <!-- Toggle (mobile) -->
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Menu -->
+    <div class="collapse navbar-collapse" id="navMenu">
+
+      <!-- ดันไปขวาสุด -->
+      <div class="ms-auto d-flex align-items-center">
         <a href="f_profile.php" class="text-white text-decoration-none me-3 fw-bold">
-            <i class="bi bi-person-circle"></i> <?= htmlspecialchars($user['username']) ?>
+            <i class="bi bi-person-circle"></i> <?= htmlspecialchars($_SESSION['username'] ?? 'User') ?>
         </a>
-        <a href="/logout.php" class="btn btn-outline-light btn-sm">ออกจากระบบ</a>
+        <a href="/logout.php"
+           id="btnLogout"
+           class="btn btn-outline-light btn-sm">
+           ออกจากระบบ
+        </a>
+      </div>
+
     </div>
+
   </div>
 </nav>
 
