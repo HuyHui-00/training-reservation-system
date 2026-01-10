@@ -36,9 +36,17 @@ $morningFull   = !empty($trainings['morning']) ? $morningCount >= $trainings['mo
 $afternoonFull = !empty($trainings['afternoon']) ? $afternoonCount >= $trainings['afternoon']['max_participants'] : false;
 
 // เช็ควันที่: หากวันที่การอบรมผ่านไปแล้ว (น้อยกว่า today) ให้ปิดการลงทะเบียน
-$today = date('Y-m-d');
-$morningAllowed = !empty($trainings['morning']) ? (strtotime($trainings['morning']['training_date']) >= strtotime($today)) : false;
-$afternoonAllowed = !empty($trainings['afternoon']) ? (strtotime($trainings['afternoon']['training_date']) >= strtotime($today)) : false;
+$now = time();
+
+$morningAllowed = false;
+if (!empty($trainings['morning'])) {
+    $morningAllowed = $now < strtotime($trainings['morning']['training_date'] . ' 12:00:00');
+}
+
+$afternoonAllowed = false;
+if (!empty($trainings['afternoon'])) {
+    $afternoonAllowed = $now < strtotime($trainings['afternoon']['training_date'] . ' 17:00:00');
+}
 ?>
 
 <!DOCTYPE html>
