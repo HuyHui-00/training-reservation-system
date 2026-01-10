@@ -19,20 +19,20 @@ $redirect_url = '';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $username = trim($_POST['username'] ?? '');
+    $email = trim($_POST['email'] ?? '');
     $password = trim($_POST['password'] ?? '');
 
-    if (!$username || !$password) {
-        $error = "กรุณากรอกชื่อผู้ใช้และรหัสผ่าน";
+    if (!$email || !$password) {
+        $error = "กรุณากรอกอีเมลและรหัสผ่าน";
     } else {
 
         $stmt = $conn->prepare(
             "SELECT id, username, password, role
              FROM users
-             WHERE username = ?
+             WHERE email = ?
              LIMIT 1"
         );
-        $stmt->bind_param("s", $username);
+        $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
 
@@ -55,10 +55,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 }
 
             } else {
-                $error = "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
+                $error = "อีเมลหรือรหัสผ่านไม่ถูกต้อง";
             }
         } else {
-            $error = "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
+            $error = "อีเมลหรือรหัสผ่านไม่ถูกต้อง";
         }
     }
 }
@@ -108,8 +108,8 @@ Swal.fire({
 
             <form method="POST" id="loginForm">
                 <div class="mb-3">
-                    <label class="form-label">ชื่อผู้ใช้</label>
-                    <input type="text" name="username" id="username" class="form-control" placeholder="Username" autocomplete="username">
+                    <label class="form-label">อีเมล</label>
+                    <input type="email" name="email" id="email" class="form-control" placeholder="Email" autocomplete="email">
                 </div>
 
                 <div class="mb-3">
@@ -139,16 +139,16 @@ Swal.fire({
 
 <script>
 const loginForm = document.getElementById("loginForm");
-const username  = document.getElementById("username");
+const email     = document.getElementById("email");
 const password  = document.getElementById("password");
 
 loginForm.addEventListener("submit", e => {
-    if (!username.value.trim() || !password.value.trim()) {
+    if (!email.value.trim() || !password.value.trim()) {
         e.preventDefault();
         Swal.fire({
             icon: 'warning',
             title: 'ข้อมูลไม่ครบ',
-            text: 'กรุณากรอกชื่อผู้ใช้และรหัสผ่าน'
+            text: 'กรุณากรอกอีเมลและรหัสผ่าน'
         });
     }
 });
