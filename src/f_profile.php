@@ -3,7 +3,7 @@ require_once __DIR__ . '/components/user_guard.php';
 include 'db.php';
 
 $user_id = $_SESSION['user_id'];
-$stmt = $conn->prepare("SELECT username, email, role FROM users WHERE id = ?");
+$stmt = $conn->prepare("SELECT prefix, username, email, role FROM users WHERE id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
@@ -116,19 +116,28 @@ $history = $stmt_hist->get_result();
             </div>
             <div class="card-body">
                 <div class="mb-3">
-                    <label class="fw-bold text-muted">ชื่อผู้ใช้:</label>
-                    <div class="fs-5"><?= htmlspecialchars($user['username']) ?></div>
+                    <label class="fw-bold text-muted">ชื่อผู้ใช้</label>
+                    <div class="fs-5"><?= htmlspecialchars($user['prefix']) . ' ' . htmlspecialchars($user['username'])?></div>
                 </div>
                 <div class="mb-3">
-                    <label class="fw-bold text-muted">อีเมล:</label>
-                    <div class="fs-5"><?= htmlspecialchars($user['email']) ?></div>
+                    <label class="fw-bold text-muted">อีเมล<div class="fs-5"><?= htmlspecialchars($user['email']) ?></div></label>
+                    
                 </div>
                 <div class="mb-3">
-                    <label class="fw-bold text-muted">สถานะ:</label>
-                    <div>
-                        <span class="badge bg-info"><?= htmlspecialchars($user['role']) ?></span>
-                    </div>
+                    <label class="fw-bold text-muted">สถานะ:
+                        <?php
+                        $roles = [
+                            'Admin'   => 'ผู้ดูแลระบบ',
+                            'Student' => 'นักศึกษา',
+                            'Staff'   => 'เจ้าหน้าที่'
+                        ];
+                
+                        $roleText = $roles[$user['role']] ?? $user['role'];
+                        ?>
+                        <span class="badge bg-info"><?= htmlspecialchars($roleText) ?></span>
+                    </label>
                 </div>
+
             </div>
         </div>
 
