@@ -116,73 +116,10 @@ $history = $stmt_hist->get_result();
     </div>
 </form>
 
-<!-- ===== desktop ===== -->
-<div class="table-responsive d-none d-md-block">
-<table class="table table-bordered table-striped align-middle text-center">
-<thead style="background:#1f2937;color:white;">
-<tr>
-    <th>ลำดับ</th>
-    <th>วันที่</th>
-    <th>ช่วงเวลา</th>
-    <th>หัวข้อ</th>
-    <th>วิทยากร</th>
-    <th>สถานะ</th>
-    <th>จัดการ</th>
-</tr>
-</thead>
-<tbody>
-
+<!-- ===== history list (card style) ===== -->
+<div>
 <?php
-$i = 1;
 if ($history->num_rows > 0):
-while($row = $history->fetch_assoc()):
-$is_past = ($row['training_date'] < $today);
-?>
-<tr>
-    <td><?= $i++ ?></td>
-    <td><?= thaiDate($row['training_date']) ?></td>
-    <td>
-        <?= $row['period']=='morning'
-            ? '<span class="badge bg-warning">เช้า</span>'
-            : '<span class="badge bg-info">บ่าย</span>' ?>
-    </td>
-    <td class="text-start"><?= htmlspecialchars($row['title']) ?></td>
-    <td><?= htmlspecialchars($row['speaker']) ?></td>
-    <td>
-        <?= $is_past
-            ? '<span class="badge bg-secondary">อบรมเสร็จสิ้น</span>'
-            : '<span class="badge bg-success">ลงทะเบียนแล้ว</span>' ?>
-    </td>
-    <td>
-        <?php if(!$is_past): ?>
-        <a href="f_edit_register.php?reg_id=<?= $row['reg_id'] ?>" 
-           class="btn btn-outline-warning btn-sm me-1">
-           <i class="bi bi-pencil"></i> แก้ไข
-        </a>
-        <button onclick="confirmCancel(<?= $row['reg_id'] ?>)"
-                class="btn btn-outline-danger btn-sm">
-            ยกเลิก
-        </button>
-        <?php else: ?> -
-        <?php endif; ?>
-    </td>
-</tr>
-<?php endwhile; else: ?>
-<tr>
-<td colspan="7" class="text-muted text-center py-4">
-    ยังไม่มีประวัติการลงทะเบียน
-</td>
-</tr>
-<?php endif; ?>
-
-</tbody>
-</table>
-</div>
-
-<!-- ===== mobile ===== -->
-<div class="d-md-none">
-<?php
-$history->data_seek(0);
 while($row = $history->fetch_assoc()):
 $is_past = ($row['training_date'] < $today);
 ?>
@@ -211,7 +148,11 @@ $is_past = ($row['training_date'] < $today);
     </div>
 </div>
 </div>
-<?php endwhile; ?>
+<?php endwhile; else: ?>
+    <div class="text-center text-muted py-5">
+        ยังไม่มีประวัติการลงทะเบียน
+    </div>
+<?php endif; ?>
 </div>
 
 </div>

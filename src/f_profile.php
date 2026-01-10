@@ -81,13 +81,13 @@ if (!$user) {
 <!-- ================== ปุ่มเมนูจัดการ ================== -->
 <div class="row g-3">
     <div class="col-md-6">
-        <a href="edit_profile.php" class="btn btn-warning w-100 py-3 shadow-sm">
+        <a href="edit_profile.php" class="btn btn-warning w-100 py-1 shadow-sm">
             <i class="bi bi-pencil-square fs-4"></i><br>
             แก้ไขข้อมูลผู้ใช้
         </a>
     </div>
     <div class="col-md-6">
-        <a href="f_history.php" class="btn btn-primary w-100 py-3 shadow-sm">
+        <a href="f_history.php" class="btn btn-primary w-100 py-1 shadow-sm">
             <i class="bi bi-clock-history fs-4"></i><br>
             ประวัติการลงทะเบียน
         </a>

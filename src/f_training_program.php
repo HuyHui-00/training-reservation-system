@@ -37,6 +37,10 @@ if ($start_date !== '' && $end_date !== '') {
   $where[] = "training_date <= ?";
   $types .= 's';
   $params[] = $end_date;
+} else {
+  if ($keyword === '') {
+    $where[] = "training_date >= CURDATE()";
+  }
 }
 
 /* ===== นับจำนวนวันอบรมทั้งหมด ===== */
@@ -110,7 +114,6 @@ function countRegister($conn, $training_id, $period) {
   return $stmt->get_result()->fetch_assoc()['total'];
 }
 
-$today = date('Y-m-d');
 $now = time();
 ?>
 <!DOCTYPE html>
@@ -264,7 +267,6 @@ $now = time();
 
           <thead style="background:#1f2937;color:white;">
             <tr>
-              <th style="min-width:60px;">ลำดับ</th>
               <th style="min-width:120px;">วันที่</th>
               <th style="min-width:150px;">ช่วงเช้า</th>
               <th style="min-width:150px;">ช่วงบ่าย</th>
@@ -275,14 +277,12 @@ $now = time();
           <tbody>
 
 <?php
-$index = 1;
 while ($row = $result->fetch_assoc()):
     $date      = $row['training_date'];
     $morning   = $row['morning_title'];
     $afternoon = $row['afternoon_title'];
 ?>
 <tr>
-  <td><?= $index++ ?></td>
   <td><?= thaiDate($date) ?></td>
 
   <td>
@@ -351,13 +351,12 @@ while ($row = $result->fetch_assoc()):
       <div class="d-sm-none mt-3">
 
 <?php
-$index = 1;
 $result->data_seek(0); 
 while ($row = $result->fetch_assoc()):
 ?>
     <div class="mobile-card">
         <div class="mobile-card-title">
-            <?= $index++ ?>) <?= thaiDate($row['training_date']) ?>
+            <?= thaiDate($row['training_date']) ?>
         </div>
 
         <div class="mt-1">
