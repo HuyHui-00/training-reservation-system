@@ -26,8 +26,12 @@ $alreadyRegistered = $stmt->get_result()->num_rows > 0;
 
 $student_name  = '';
 $student_email = '';
+$student_id_val  = '';
+$faculty_val     = '';
+$major_val       = '';
+$class_group_val = '';
 
-$stmt2 = $conn->prepare("SELECT prefix, username, email FROM users WHERE id = ? LIMIT 1");
+$stmt2 = $conn->prepare("SELECT prefix, username, email, student_id, faculty, major, class_group FROM users WHERE id = ? LIMIT 1");
 $stmt2->bind_param("i", $user_id);
 $stmt2->execute();
 $result = $stmt2->get_result();
@@ -35,6 +39,10 @@ $result = $stmt2->get_result();
 if ($row = $result->fetch_assoc()) {
     $student_name  = trim($row['prefix'] . ' ' . $row['username']);
     $student_email = $row['email'];
+    $student_id_val  = $row['student_id'];
+    $faculty_val     = $row['faculty'];
+    $major_val       = $row['major'];
+    $class_group_val = $row['class_group'];
 }
 ?>
 
@@ -136,6 +144,7 @@ if ($row = $result->fetch_assoc()) {
             <input
               type="text"
               name="student_id"
+              value="<?= htmlspecialchars($student_id_val) ?>"
               class="form-control"
               required
               inputmode="numeric"
@@ -151,17 +160,17 @@ if ($row = $result->fetch_assoc()) {
 
           <div class="mb-3">
             <label class="form-label">คณะ</label>
-            <input type="text" name="faculty" class="form-control" required>
+            <input type="text" name="faculty" class="form-control" value="<?= htmlspecialchars($faculty_val) ?>" required>
           </div>
 
           <div class="mb-3">
             <label class="form-label">สาขาวิชา</label>
-            <input type="text" name="major" class="form-control" required>
+            <input type="text" name="major" class="form-control" value="<?= htmlspecialchars($major_val) ?>" required>
           </div>
 
           <div class="mb-3">
             <label class="form-label">กลุ่มเรียน</label>
-            <input type="text" name="class_group" class="form-control" required>
+            <input type="text" name="class_group" class="form-control" value="<?= htmlspecialchars($class_group_val) ?>" required>
           </div>
 
           <div class="mb-3">

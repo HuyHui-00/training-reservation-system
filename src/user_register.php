@@ -9,12 +9,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $prefix   = $_POST['prefix'] ?? '';
     $username = trim($_POST['username'] ?? '');
     $email    = trim($_POST['email'] ?? '');
+    $student_id  = trim($_POST['student_id'] ?? '');
+    $faculty     = trim($_POST['faculty'] ?? '');
+    $major       = trim($_POST['major'] ?? '');
+    $class_group = trim($_POST['class_group'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirm  = $_POST['confirm_password'] ?? '';
 
     if ($prefix === '') {
         $error = 'กรุณาเลือกคำนำหน้า';
-    } elseif ($username === '' || $email === '' || $password === '' || $confirm === '') {
+    } elseif ($username === '' || $email === '' || $student_id === '' || 
+              $faculty === '' || $major === '' || $class_group === '' || 
+              $password === '' || $confirm === '') {
         $error = 'กรุณากรอกข้อมูลให้ครบถ้วน';
     } elseif ($password !== $confirm) {
         $error = 'รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน';
@@ -41,10 +47,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $hash = password_hash($password, PASSWORD_DEFAULT);
 
                 $stmt = $conn->prepare(
-                    "INSERT INTO users (prefix, username, email, password, role)
-                     VALUES (?, ?, ?, ?, 'Student')"
+                    "INSERT INTO users (prefix, username, email, password, role, student_id, faculty, major, class_group)
+                     VALUES (?, ?, ?, ?, 'Student', ?, ?, ?, ?)"
                 );
-                $stmt->bind_param("ssss", $prefix, $username, $email, $hash);
+                $stmt->bind_param("ssssssss", $prefix, $username, $email, $hash, $student_id, $faculty, $major, $class_group);
 
                 if ($stmt->execute()) {
                     $success = true;
@@ -108,6 +114,26 @@ body {
 <div class="mb-3">
 <label class="form-label">ชื่อ-นามสกุล</label>
 <input type="text" name="username" class="form-control" required>
+</div>
+
+<div class="mb-3">
+<label class="form-label">รหัสนักศึกษา</label>
+<input type="text" name="student_id" class="form-control" required inputmode="numeric" pattern="[0-9]+" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+</div>
+
+<div class="mb-3">
+<label class="form-label">คณะ</label>
+<input type="text" name="faculty" class="form-control" required>
+</div>
+
+<div class="mb-3">
+<label class="form-label">สาขาวิชา</label>
+<input type="text" name="major" class="form-control" required>
+</div>
+
+<div class="mb-3">
+<label class="form-label">กลุ่มเรียน</label>
+<input type="text" name="class_group" class="form-control" required>
 </div>
 
 <div class="mb-3">

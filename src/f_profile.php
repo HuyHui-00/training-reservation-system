@@ -5,7 +5,7 @@ include 'db.php';
 $user_id = $_SESSION['user_id'];
 
 /* ===== user info ===== */
-$stmt = $conn->prepare("SELECT username, email, role FROM users WHERE id = ?");
+$stmt = $conn->prepare("SELECT username, email, role, student_id, faculty, major, class_group FROM users WHERE id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $user = $stmt->get_result()->fetch_assoc();
@@ -61,6 +61,14 @@ if (!$user) {
     </div>
     <div class="card-body">
         <div class="mb-2"><b>ชื่อผู้ใช้:</b> <?= htmlspecialchars($user['username']) ?></div>
+        
+        <?php if($user['role'] === 'Student'): ?>
+        <div class="mb-2"><b>รหัสนักศึกษา:</b> <?= htmlspecialchars($user['student_id']) ?></div>
+        <div class="mb-2"><b>คณะ:</b> <?= htmlspecialchars($user['faculty']) ?></div>
+        <div class="mb-2"><b>สาขาวิชา:</b> <?= htmlspecialchars($user['major']) ?></div>
+        <div class="mb-2"><b>กลุ่มเรียน:</b> <?= htmlspecialchars($user['class_group']) ?></div>
+        <?php endif; ?>
+
         <div class="mb-2"><b>อีเมล:</b> <?= htmlspecialchars($user['email']) ?></div>
         <div>
             <b>สถานะ:</b>
