@@ -192,6 +192,10 @@ $is_past = ($row['training_date'] < $today);
     </td>
     <td>
         <?php if(!$is_past): ?>
+        <a href="f_edit_register.php?reg_id=<?= $row['reg_id'] ?>" 
+           class="btn btn-outline-warning btn-sm me-1">
+           <i class="bi bi-pencil"></i> แก้ไข
+        </a>
         <button onclick="confirmCancel(<?= $row['reg_id'] ?>)"
                 class="btn btn-outline-danger btn-sm">
             ยกเลิก
@@ -232,10 +236,14 @@ $is_past = ($row['training_date'] < $today);
             ? '<span class="badge bg-secondary">อบรมเสร็จสิ้น</span>'
             : '<span class="badge bg-success">ลงทะเบียนแล้ว</span>' ?>
         <?php if(!$is_past): ?>
+        <div>
+        <a href="f_edit_register.php?reg_id=<?= $row['reg_id'] ?>" 
+           class="btn btn-outline-warning btn-sm me-1">แก้ไข</a>
         <button onclick="confirmCancel(<?= $row['reg_id'] ?>)"
                 class="btn btn-outline-danger btn-sm">
             ยกเลิก
         </button>
+        </div>
         <?php endif; ?>
     </div>
 </div>
@@ -279,6 +287,18 @@ Swal.fire({
 </script>
 <?php endif; ?>
 
+<?php if(isset($_GET['msg']) && $_GET['msg'] === 'updated'): ?>
+<script>
+Swal.fire({
+    icon: 'success',
+    title: 'บันทึกเรียบร้อย',
+    text: 'แก้ไขข้อมูลการลงทะเบียนสำเร็จ',
+    confirmButtonText: 'ตกลง'
+}).then(() => {
+    history.replaceState(null, '', 'f_profile.php');
+});
+</script>
+<?php endif; ?>
 
 </body>
 </html>
