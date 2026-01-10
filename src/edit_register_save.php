@@ -63,7 +63,7 @@ $stmt = $conn->prepare("
 $stmt->bind_param("ssssii", $student_id, $faculty, $major, $class_group, $reg_id, $user_id);
 
 if ($stmt->execute()) {
-    header("Location: f_profile.php?msg=updated");
+    header("Location: f_history.php?msg=updated");
     exit;
 } else {
     echo "เกิดข้อผิดพลาด: " . $conn->error;

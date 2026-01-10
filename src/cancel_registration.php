@@ -41,5 +41,5 @@ $delete->bind_param("ii", $reg_id, $user_id);
 $delete->execute();
 
 /* กลับไปหน้าโปรไฟล์ พร้อมแจ้งสถานะ */
-header("Location: f_profile.php?msg=cancelled");
+header("Location: f_history.php?msg=cancelled");
 exit;

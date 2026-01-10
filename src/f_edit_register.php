@@ -135,7 +135,7 @@ if ($data['training_date'] < $today) {
               <i class="bi bi-save"></i> บันทึกการแก้ไข
             </button>
 
-            <a class="btn btn-secondary w-50" href="f_profile.php">
+            <a class="btn btn-secondary w-50" href="f_history.php">
                ยกเลิก
             </a>
           </div>
