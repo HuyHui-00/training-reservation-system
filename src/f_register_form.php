@@ -24,15 +24,17 @@ $stmt->bind_param("ii", $user_id, $id);
 $stmt->execute();
 $alreadyRegistered = $stmt->get_result()->num_rows > 0;
 
+$student_name  = '';
+$student_email = '';
 
-// --- ดึง username จาก users แทน students ---
-$student_name = '';
-$stmt2 = $conn->prepare("SELECT username FROM users WHERE id = ? LIMIT 1");
+$stmt2 = $conn->prepare("SELECT prefix, username, email FROM users WHERE id = ? LIMIT 1");
 $stmt2->bind_param("i", $user_id);
 $stmt2->execute();
 $result = $stmt2->get_result();
+
 if ($row = $result->fetch_assoc()) {
-    $student_name = $row['username']; // ใช้ username เป็นชื่อ-นามสกุล
+    $student_name  = trim($row['prefix'] . ' ' . $row['username']);
+    $student_email = $row['email'];
 }
 ?>
 
@@ -164,7 +166,11 @@ if ($row = $result->fetch_assoc()) {
 
           <div class="mb-3">
             <label class="form-label">อีเมลนักศึกษา</label>
-            <input type="email" name="email" class="form-control" required>
+            <input type="email"
+                   name="email"
+                   class="form-control bg-light"
+                   value="<?= htmlspecialchars($student_email) ?>"
+                   readonly>
           </div>
 
           <div class="d-flex justify-content-between mt-4">
